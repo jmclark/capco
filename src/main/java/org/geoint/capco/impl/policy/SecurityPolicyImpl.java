@@ -1,5 +1,6 @@
 package org.geoint.capco.impl.policy;
 
+import java.nio.charset.Charset;
 import org.geoint.capco.ForeignSecurityMarking;
 import org.geoint.capco.InvalidSecurityMarkingException;
 import org.geoint.capco.JointSecurityMarking;
@@ -14,6 +15,8 @@ import org.geoint.capco.USSecurityMarking;
 public class SecurityPolicyImpl implements SecurityPolicy {
 
     private final String name;
+    private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
+    
 
     public SecurityPolicyImpl(String name) {
         this.name = name;
@@ -29,14 +32,117 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         return new SecurityMarkingBuilderImpl();
     }
 
-    @Override
-    public SecurityMarking valueOf(String marking) throws InvalidSecurityMarkingException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Finite-state machine used to parse/validate a US security marking
+     *
+     * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
+     * DISSEM
+     *
+     */
+    private class USMarkingParser {
+
+        private USComponent component;
+
+        public SecurityMarking parse(String marking)
+                throws InvalidSecurityMarkingException {
+            if (marking == null) {
+                throw new InvalidSecurityMarkingException("Marking cannot be null.");
+            }
+
+            String[] components = marking.split("//");
+
+            if (components.length == 0) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("'")
+                        .append(marking)
+                        .append("' is not a valid security marking within the "
+                                + "Security Policy '")
+                        .append(getName())
+                        .append("'.");
+                throw new InvalidSecurityMarkingException(sb.toString());
+            }
+            
+            //component 0 should be the classification component
+            final String classification = components[0];
+            
+        }
     }
 
+    private enum USComponent {
+
+        //ordinal sequence is significant
+        classification, sci, sap, awa, fgi, dissem, other;
+    }
+
+    /**
+     * Parses the CAPCO classification marking.
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    @Override
+    public SecurityMarking valueOf(String marking) throws InvalidSecurityMarkingException {
+        if (marking.startsWith(AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR)) {
+            if (marking.startsWith(JointSecurityMarkingImpl.HEADER)) {
+                return valueOfJoint(marking);
+            } else {
+                return valueOfNonUS(marking);
+            }
+        }
+        return valueOfUS(marking);
+    }
+
+    /**
+     * Parses CAPCO classification markings expected in the form:
+     *
+     * //JOINT [classification] [country codes]
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfJoint(String marking) throws InvalidSecurityMarkingException {
+
+    }
+
+    /**
+     * Parses CAPCO classification markings expected in the form:
+     *
+     * //[country code] [non-U.S. classification]
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfNonUS(String marking) throws InvalidSecurityMarkingException {
+
+    }
+
+    /**
+     * Parses CAPCO classification marking expected in the form:
+     *
+     * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
+     * DISSEM
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfUS(String marking) throws InvalidSecurityMarkingException {
+
+    }
+
+    /**
+     * Expects the byte[] is a UTF-8 string
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
     @Override
     public SecurityMarking valueOf(byte[] marking) throws InvalidSecurityMarkingException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return valueOf(new String(marking, MARKING_CHARSET));
     }
 
     @Override
@@ -94,7 +200,6 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
     private class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
         @Override
@@ -196,10 +301,12 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         public String[] getAvailableACCM() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
-    
+
     private abstract class AbstractSecurityMarkingImpl implements SecurityMarking {
+
+        public static final String COMPONENT_SEPARATOR = "//";
 
         @Override
         public SecurityPolicy getPolicy() {
@@ -230,11 +337,11 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         public byte[] asBytes() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
-    
-    private class USSecurityMarkingImpl extends AbstractSecurityMarkingImpl 
-    implements USSecurityMarking{
+
+    private class USSecurityMarkingImpl extends AbstractSecurityMarkingImpl
+            implements USSecurityMarking {
 
         @Override
         public String[] getSCI() {
@@ -275,26 +382,28 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         public String[] getAccm() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
-    
-    private class JointSecurityMarkingImpl extends USSecurityMarkingImpl 
-    implements JointSecurityMarking {
+
+    private class JointSecurityMarkingImpl extends USSecurityMarkingImpl
+            implements JointSecurityMarking {
+
+        public static final String HEADER = "//JOINT";
 
         @Override
         public String[] getContributingCountries() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
-    
+
     private class ForeignSecurityMarkingImpl extends AbstractSecurityMarkingImpl
-    implements ForeignSecurityMarking {
+            implements ForeignSecurityMarking {
 
         @Override
         public String getOriginatingCountry() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
 }
