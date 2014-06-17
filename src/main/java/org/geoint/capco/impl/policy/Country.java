@@ -9,8 +9,8 @@ public final class Country {
     private final String name;
 
     public Country(String code, String name) {
-        this.code = code;
-        this.name = name;
+        this.code = code.intern();
+        this.name = name.intern();
     }
 
     public String getCode() {

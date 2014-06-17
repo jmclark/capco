@@ -9,24 +9,21 @@ import java.util.Objects;
  */
 public abstract class MarkingComponent {
 
-    private String portion;
-    private String banner;
+    private final String portion;
+    private final String banner;
     private final List<ComponentRestriction> restrictions = new ArrayList<>();
+
+    public MarkingComponent(String portion, String banner) {
+        this.portion = portion.intern();
+        this.banner = banner.intern();
+    }
 
     public String getPortion() {
         return portion;
     }
 
-    public void setPortion(String portion) {
-        this.portion = portion;
-    }
-
     public String getBanner() {
         return banner;
-    }
-
-    public void setBanner(String banner) {
-        this.banner = banner;
     }
 
     public List<ComponentRestriction> getRestrictions() {

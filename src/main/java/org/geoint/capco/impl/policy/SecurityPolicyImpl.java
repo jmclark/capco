@@ -1,6 +1,8 @@
 package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import org.geoint.capco.ForeignSecurityMarking;
 import org.geoint.capco.InvalidSecurityMarkingException;
 import org.geoint.capco.JointSecurityMarking;
@@ -8,13 +10,15 @@ import org.geoint.capco.SecurityMarking;
 import org.geoint.capco.SecurityMarkingBuilder;
 import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.USSecurityMarking;
+import org.geoint.capco.spi.MutableSecurityPolicy;
 
 /**
  *
  */
-public class SecurityPolicyImpl implements SecurityPolicy {
+public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
     private final String name;
+    private Map<String, Country> countries = new HashMap<>(); //key is trigraph
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
     
 
@@ -30,6 +34,86 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     @Override
     public SecurityMarkingBuilder builder() {
         return new SecurityMarkingBuilderImpl();
+    }
+
+    @Override
+    public void add(Country country) {
+        countries.put(country.getCode(), country);
+    }
+
+    @Override
+    public void remove(Country country) { 
+       countries.remove(country.getCode());
+    }
+
+    @Override
+    public void add(ClassificationComponent classification) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(ClassificationComponent classification) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(AeaComponent aea) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(AeaComponent aea) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(DisseminationComponent diss) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(DisseminationComponent diss) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(RelToComponent relTo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(RelToComponent relTo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(DisplayToComponent displayTo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(DisplayToComponent displayTo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(SapComponent sap) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(SapComponent sap) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void add(SciComponent sci) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remove(SciComponent sci) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

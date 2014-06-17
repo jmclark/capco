@@ -1,18 +1,19 @@
 package org.geoint.capco.impl.policy;
 
 /**
- *
+ * Base classification component
  */
 public class ClassificationComponent extends MarkingComponent {
 
-    private short weight;
+    private final short weight;
+
+    public ClassificationComponent(String portion, String banner, short weight) {
+        super(portion, banner);
+        this.weight = weight;
+    }
 
     public short getWeight() {
         return weight;
-    }
-
-    public void setWeight(short weight) {
-        this.weight = weight;
     }
 
 }
