@@ -1,5 +1,7 @@
 package org.geoint.capco;
 
+import org.geoint.capco.impl.policy.Country;
+
 /**
  * Joint classification markings are used on information owned or produced by
  * more than one country/international organization.
@@ -12,5 +14,5 @@ public interface JointSecurityMarking extends USSecurityMarking {
      *
      * @return
      */
-    String[] getContributingCountries();
+    Country[] getContributingCountries();
 }

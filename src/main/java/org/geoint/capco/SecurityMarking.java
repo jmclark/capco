@@ -1,5 +1,7 @@
 package org.geoint.capco;
 
+import org.geoint.capco.impl.policy.ClassificationComponent;
+
 /**
  * Intelligence Community (IC)/CAPCO classification marking.
  * 
@@ -21,7 +23,7 @@ public interface SecurityMarking {
      *
      * @return
      */
-    String getClassification();
+    ClassificationComponent getClassification();
 
     /**
      * Merge the provided {@link SecurityMarking} with this marking, returning
@@ -42,12 +44,19 @@ public interface SecurityMarking {
     boolean isPermitted(SecurityMarking marking);
 
     /**
-     * Stringified serialization of the marking.
+     * Serialize SecurityMarking as CAPCO portion marking.
      *
      * @return
      */
-    String asString();
+    String asPortion();
 
+    /**
+     * Serialize SecurityMarking as CAPCO banner marking.
+     * 
+     * @return 
+     */
+    String asBanner();
+    
     /**
      * Binary serialization of the marking.
      *

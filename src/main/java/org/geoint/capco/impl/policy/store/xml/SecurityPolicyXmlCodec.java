@@ -32,6 +32,7 @@ public class SecurityPolicyXmlCodec {
 
     public void encode(SecurityPolicy[] policies, OutputStream out)
             throws IOException {
+        //TODO
         throw new UnsupportedOperationException("todo");
     }
 
@@ -46,11 +47,13 @@ public class SecurityPolicyXmlCodec {
 
 
             chars.delete(0, chars.length());
+        //TODO
             throw new UnsupportedOperationException("todo");
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        //TODO
             throw new UnsupportedOperationException("todo");
         }
 

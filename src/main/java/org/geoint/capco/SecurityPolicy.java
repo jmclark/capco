@@ -2,11 +2,15 @@ package org.geoint.capco;
 
 /**
  * A security policy is configured to manage the available security marking
- * options and restrictions, allowing for applications to manage multiple
- * policies.
+ * options and restrictions, allowing for applications to be configured for
+ * their operating environment. Separating policies from logic also allows us to
+ * manage multiple policies simultaneously in a single application.
  * <p>
- * Multiple policies is helpful when, for example, data must be moved across
- * security domains with different security policies.
+ * Multiple policies are useful when, for example, data must be moved across
+ * security domains with different security policies. Such an application can
+ * maintain both policies and ensure that the data transferring to the other
+ * system can support the data before sending the data over to the other domain
+ * for validation.
  *
  */
 public interface SecurityPolicy {
