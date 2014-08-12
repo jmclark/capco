@@ -3,6 +3,8 @@ package org.geoint.capco.impl.policy;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.ForeignSecurityMarking;
 import org.geoint.capco.InvalidSecurityMarkingException;
 import org.geoint.capco.JointSecurityMarking;
@@ -14,16 +16,34 @@ import org.geoint.capco.spi.MutableSecurityPolicy;
 
 /**
  *
+ * Thread-safe MutableSecurityPolicy implementation.
  */
 public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
     private final String name;
+
+    //indicies
     private final Map<String, Country> countries = new HashMap<>(); //key is trigraph]
     private final Map<String, ClassificationComponent> classificationPortionMarks = new HashMap<>();
     private final Map<String, ClassificationComponent> classificationBannerMarks = new HashMap<>();
     private final Map<String, AeaComponent> aeaPortionMarks = new HashMap<>();
     private final Map<String, AeaComponent> aeaBannerMarks = new HashMap<>();
+    private final Map<String, DisseminationComponent> disPortionMarks = new HashMap<>();
+    private final Map<String, DisseminationComponent> disBannerMarks = new HashMap<>();
+    private final Map<String, RelToComponent> relPortionMarks = new HashMap<>();
+    private final Map<String, RelToComponent> relBannerMarks = new HashMap<>();
+    private final Map<String, DisplayToComponent> displayPortionMarks = new HashMap<>();
+    private final Map<String, DisplayToComponent> displayBannerMarks = new HashMap<>();
+    private final Map<String, SapComponent> sapPortionMarks = new HashMap<>();
+    private final Map<String, SapComponent> sapBannerMarks = new HashMap<>();
+    private final Map<String, SciComponent> sciPortionMarks = new HashMap<>();
+    private final Map<String, SciComponent> sciBannerMarks = new HashMap<>();
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
+
+    //synchronization
+    private final ReentrantReadWriteLock policyLock = new ReentrantReadWriteLock();
+    private final Lock readLock = policyLock.readLock();
+    private final Lock writeLock = policyLock.writeLock();
 
     public SecurityPolicyImpl(String name) {
         this.name = name;
@@ -41,88 +61,179 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
     @Override
     public void add(Country country) {
-        countries.put(country.getCode(), country);
+        writeLock.lock();
+        try {
+            countries.put(country.getCode(), country);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(Country country) {
-        countries.remove(country.getCode());
+        writeLock.lock();
+        try {
+            countries.remove(country.getCode());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(ClassificationComponent classification) {
-        this.classificationBannerMarks.put(classification.getBanner().intern(),
-                classification);
-        this.classificationPortionMarks.put(classification.getPortion().intern(),
-                classification);
+        writeLock.lock();
+        try {
+            this.classificationBannerMarks.put(classification.getBanner().intern(),
+                    classification);
+            this.classificationPortionMarks.put(classification.getPortion().intern(),
+                    classification);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(ClassificationComponent classification) {
-        this.classificationBannerMarks.remove(classification.getBanner());
-        this.classificationPortionMarks.remove(classification.getPortion());
+        writeLock.lock();
+        try {
+            this.classificationBannerMarks.remove(classification.getBanner());
+            this.classificationPortionMarks.remove(classification.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(AeaComponent aea) {
-        this.aeaBannerMarks.put(aea.getBanner().intern(), aea);
-        this.aeaPortionMarks.put(aea.getPortion().intern(), aea);
+        writeLock.lock();
+        try {
+            this.aeaBannerMarks.put(aea.getBanner().intern(), aea);
+            this.aeaPortionMarks.put(aea.getPortion().intern(), aea);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(AeaComponent aea) {
-        this.aeaBannerMarks.remove(aea.getBanner());
-        this.aeaPortionMarks.remove(aea.getPortion());
+        writeLock.lock();
+        try {
+            this.aeaBannerMarks.remove(aea.getBanner());
+            this.aeaPortionMarks.remove(aea.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
+
     }
 
     @Override
     public void add(DisseminationComponent diss) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.disBannerMarks.put(diss.getBanner().intern(), diss);
+            this.disPortionMarks.put(diss.getPortion().intern(), diss);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(DisseminationComponent diss) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.disBannerMarks.remove(diss.getBanner());
+            this.disPortionMarks.remove(diss.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(RelToComponent relTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.relBannerMarks.put(relTo.getBanner().intern(), relTo);
+            this.relPortionMarks.put(relTo.getPortion().intern(), relTo);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(RelToComponent relTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.relBannerMarks.remove(relTo.getBanner());
+            this.relPortionMarks.remove(relTo.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(DisplayToComponent displayTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.displayBannerMarks.put(displayTo.getBanner().intern(), displayTo);
+            this.displayPortionMarks.put(displayTo.getPortion().intern(), displayTo);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(DisplayToComponent displayTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.displayBannerMarks.remove(displayTo.getBanner());
+            this.displayPortionMarks.remove(displayTo.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(SapComponent sap) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.sapBannerMarks.put(sap.getBanner().intern(), sap);
+            this.sapPortionMarks.put(sap.getPortion().intern(), sap);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(SapComponent sap) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.sapBannerMarks.remove(sap.getBanner());
+            this.sapPortionMarks.remove(sap.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void add(SciComponent sci) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.sciBannerMarks.put(sci.getBanner().intern(), sci);
+            this.sciPortionMarks.put(sci.getPortion().intern(), sci);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void remove(SciComponent sci) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        writeLock.lock();
+        try {
+            this.sciBannerMarks.remove(sci.getBanner());
+            this.sciPortionMarks.remove(sci.getPortion());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     /**
@@ -135,6 +246,72 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     @Override
     public SecurityMarking valueOf(byte[] marking) throws InvalidSecurityMarkingException {
         return valueOf(new String(marking, MARKING_CHARSET));
+    }
+
+    /**
+     * Parses the CAPCO classification marking.
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    @Override
+    public SecurityMarking valueOf(String marking)
+            throws InvalidSecurityMarkingException {
+        if (marking.startsWith(AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR)) {
+            if (marking.startsWith(
+                    AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR
+                    + JointSecurityMarkingImpl.HEADER
+            )) {
+                return valueOfJoint(marking);
+            } else {
+                return valueOfNonUS(marking);
+            }
+        }
+        return valueOfUS(marking);
+    }
+
+    /**
+     * Parses CAPCO classification markings expected in the form:
+     *
+     * //JOINT [classification] [country codes]
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfJoint(String marking) 
+            throws InvalidSecurityMarkingException {
+
+    }
+
+    /**
+     * Parses CAPCO classification markings expected in the form:
+     *
+     * //[country code] [non-U.S. classification]
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfNonUS(String marking) 
+            throws InvalidSecurityMarkingException {
+
+    }
+
+    /**
+     * Parses CAPCO classification marking expected in the form:
+     *
+     * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
+     * DISSEM
+     *
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    private SecurityMarking valueOfUS(String marking) 
+            throws InvalidSecurityMarkingException {
+        return 
     }
 
     @Override
@@ -250,9 +427,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
                 } else if (componentString.contentEquals("HVSACO")) {
                     //is Handle via Special Access Channels Only
                     m.hvsaco = true;
-                } else if (!aeaBanner.isEmpty() &&
-                        (aeaBanner.containsKey(componentString) 
-                        || aeaPortion.containsKey(componentString))) {
+                } else if (!aeaBannerMarks.isEmpty()
+                        && (aeaBannerMarks.containsKey(componentString)
+                        || aeaPortionMarks.containsKey(componentString))) {
                     //AEA Component
                 } else {
                     //is SCI component
@@ -265,65 +442,6 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
         //ordinal sequence is significant
         classification, sci, sap, awa, fgi, dissem, other;
-    }
-
-    /**
-     * Parses the CAPCO classification marking.
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
-    @Override
-    public SecurityMarking valueOf(String marking) throws InvalidSecurityMarkingException {
-        if (marking.startsWith(AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR)) {
-            if (marking.startsWith(AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR + JointSecurityMarkingImpl.HEADER)) {
-                return valueOfJoint(marking);
-            } else {
-                return valueOfNonUS(marking);
-            }
-        }
-        return valueOfUS(marking);
-    }
-
-    /**
-     * Parses CAPCO classification markings expected in the form:
-     *
-     * //JOINT [classification] [country codes]
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
-    private SecurityMarking valueOfJoint(String marking) throws InvalidSecurityMarkingException {
-
-    }
-
-    /**
-     * Parses CAPCO classification markings expected in the form:
-     *
-     * //[country code] [non-U.S. classification]
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
-    private SecurityMarking valueOfNonUS(String marking) throws InvalidSecurityMarkingException {
-
-    }
-
-    /**
-     * Parses CAPCO classification marking expected in the form:
-     *
-     * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
-     * DISSEM
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
-    private SecurityMarking valueOfUS(String marking) throws InvalidSecurityMarkingException {
-
     }
 
     private class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
