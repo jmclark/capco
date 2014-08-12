@@ -26,6 +26,8 @@ public interface SecurityPolicy {
      * Return a {@link SecurityMarking} builder for programmatic construction of
      * a marking.
      *
+     * The SecurityMarkingBuilder is NOT thread-safe.
+     *
      * @return
      */
     SecurityMarkingBuilder builder();

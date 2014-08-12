@@ -2,7 +2,9 @@ package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.ForeignSecurityMarking;
@@ -24,18 +26,25 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
     //indicies
     private final Map<String, Country> countries = new HashMap<>(); //key is trigraph]
-    private final Map<String, ClassificationComponent> classificationPortionMarks = new HashMap<>();
-    private final Map<String, ClassificationComponent> classificationBannerMarks = new HashMap<>();
+    private final Map<String, ClassificationComponent> classificationPortionMarks
+            = new HashMap<>();
+    private final Map<String, ClassificationComponent> classificationBannerMarks
+            = new HashMap<>();
     private final Map<String, AeaComponent> aeaPortionMarks = new HashMap<>();
     private final Map<String, AeaComponent> aeaBannerMarks = new HashMap<>();
-    private final Map<String, DisseminationComponent> disPortionMarks = new HashMap<>();
-    private final Map<String, DisseminationComponent> disBannerMarks = new HashMap<>();
+    private final Map<String, DisseminationComponent> disPortionMarks
+            = new HashMap<>();
+    private final Map<String, DisseminationComponent> disBannerMarks
+            = new HashMap<>();
     private final Map<String, RelToComponent> relPortionMarks = new HashMap<>();
     private final Map<String, RelToComponent> relBannerMarks = new HashMap<>();
-    private final Map<String, DisplayToComponent> displayPortionMarks = new HashMap<>();
-    private final Map<String, DisplayToComponent> displayBannerMarks = new HashMap<>();
-    private final Map<String, SapComponent> sapPortionMarks = new HashMap<>();
-    private final Map<String, SapComponent> sapBannerMarks = new HashMap<>();
+    private final Map<String, DisplayToComponent> displayPortionMarks
+            = new HashMap<>();
+    private final Map<String, DisplayToComponent> displayBannerMarks
+            = new HashMap<>();
+    private final Map<String, SapComponent> sapProgramDigraphMarks = new HashMap<>();
+    private final Map<String, SapComponent> sapProgramNames = new HashMap<>();
+    private final Map<String, SapComponent> sapCodeWords = new HashMap<>();
     private final Map<String, SciComponent> sciPortionMarks = new HashMap<>();
     private final Map<String, SciComponent> sciBannerMarks = new HashMap<>();
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
@@ -44,6 +53,13 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     private final ReentrantReadWriteLock policyLock = new ReentrantReadWriteLock();
     private final Lock readLock = policyLock.readLock();
     private final Lock writeLock = policyLock.writeLock();
+
+    //constants
+    private static final String COMPONENT_SEPARATOR = "//";
+    private static final String SUBCOMPONENT_SLASH_SEPARATOR = "/";
+    private static final String SUBCOMPONENT_SPACE_SEPARATOR = " ";
+    private static final String SAP_BANNER_IDENTIFIER = "SPECIAL ACCESS REQUIRED";
+    private static final String SAP_PORTION_IDENTIFIER = "SAR";
 
     public SecurityPolicyImpl(String name) {
         this.name = name;
@@ -196,8 +212,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     public void add(SapComponent sap) {
         writeLock.lock();
         try {
-            this.sapBannerMarks.put(sap.getBanner().intern(), sap);
-            this.sapPortionMarks.put(sap.getPortion().intern(), sap);
+            this.sapCodeWords.put(sap.getBanner().intern(), sap);
+            this.sapProgramDigraphMarks.put(sap.getPortion().intern(), sap);
+            this.sapProgramNames.put(sap.getProgramName().intern(), sap);
         } finally {
             writeLock.unlock();
         }
@@ -207,8 +224,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     public void remove(SapComponent sap) {
         writeLock.lock();
         try {
-            this.sapBannerMarks.remove(sap.getBanner());
-            this.sapPortionMarks.remove(sap.getPortion());
+            this.sapCodeWords.remove(sap.getBanner());
+            this.sapProgramDigraphMarks.remove(sap.getPortion());
+            this.sapProgramNames.remove(sap.getProgramName());
         } finally {
             writeLock.unlock();
         }
@@ -280,9 +298,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfJoint(String marking) 
+    private SecurityMarking valueOfJoint(String marking)
             throws InvalidSecurityMarkingException {
-
+        throw new InvalidSecurityMarkingException("Joing markings not yet supported by policy.");
     }
 
     /**
@@ -294,9 +312,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfNonUS(String marking) 
+    private SecurityMarking valueOfNonUS(String marking)
             throws InvalidSecurityMarkingException {
-
+        throw new InvalidSecurityMarkingException("NON-US markings not yet supported by policy.");
     }
 
     /**
@@ -309,9 +327,9 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfUS(String marking) 
+    private SecurityMarking valueOfUS(String marking)
             throws InvalidSecurityMarkingException {
-        return 
+        return new USMarkingParser().parse(marking);
     }
 
     @Override
@@ -378,15 +396,14 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
      */
     private class USMarkingParser {
 
-        private USFsmComponent component;
-
+//        private USFsmComponent component;
         public SecurityMarking parse(String marking)
                 throws InvalidSecurityMarkingException {
             if (marking == null) {
                 throw new InvalidSecurityMarkingException("Marking cannot be null.");
             }
 
-            String[] components = marking.split("//");
+            String[] components = marking.split(COMPONENT_SEPARATOR);
 
             if (components.length == 0) {
                 StringBuilder sb = new StringBuilder();
@@ -399,52 +416,46 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
                 throw new InvalidSecurityMarkingException(sb.toString());
             }
 
-            final USSecurityMarkingImpl m = new USSecurityMarkingImpl();
+            final SecurityMarkingBuilder mb = builder();
 
             //component 0 should be the classification component
-            final String classification = components[0].toUpperCase();
-            component = USFsmComponent.classification;
-            if (classificationPortionMarks.containsKey(classification)) {
-                m.classification = classificationPortionMarks.get(classification);
-            } else if (classificationBannerMarks.containsKey(classification)) {
-                m.classification = classificationBannerMarks.get(classification);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append("'").append(classification).append("' is not a "
-                        + "valid classification component for this policy.");
-                throw new InvalidSecurityMarkingException(sb.toString());
-            }
+            mb.setClassification(components[0].toUpperCase());
 
             //component 1 starts the optional components
             for (int c = 1; c < components.length; c++) {
                 final String componentString = components[c].toUpperCase();
-                if (componentString.startsWith("SAR") || componentString.startsWith("SPECIAL ACCESS REQUIRED")) {
-
+                if (componentString.startsWith(SAP_PORTION_IDENTIFIER)
+                        || componentString.startsWith(SAP_BANNER_IDENTIFIER)) {
+                    //grab the SAP program names, code words, or digraph/trigraphs
+                    //after the component header
+                    final String sapContent = componentString.substring(componentString.indexOf("-"));
+                    mb.addSAP(sapContent.split(SUBCOMPONENT_SLASH_SEPARATOR));
                 } else if (componentString.startsWith("REL")) {
 
                 } else if (componentString.startsWith("FGI")) {
 
                 } else if (componentString.contentEquals("HVSACO")) {
                     //is Handle via Special Access Channels Only
-                    m.hvsaco = true;
+                    mb.setSpecialAccessChannelsOnly(true);
                 } else if (!aeaBannerMarks.isEmpty()
                         && (aeaBannerMarks.containsKey(componentString)
                         || aeaPortionMarks.containsKey(componentString))) {
-                    //AEA Component
+                    
                 } else {
-                    //is SCI component
+                    //is Dissemination component
                 }
             }
         }
     }
 
-    private enum USFsmComponent {
-
-        //ordinal sequence is significant
-        classification, sci, sap, awa, fgi, dissem, other;
-    }
-
+//    private enum USFsmComponent {
+//
+//        //ordinal sequence is significant
+//        classification, sci, sap, awa, fgi, dissem, other;
+//    }
     private class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
+
+        final USSecurityMarkingImpl m = new USSecurityMarkingImpl();
 
         @Override
         public SecurityMarkingBuilder setOwningCountry(String countryCode) {
@@ -457,8 +468,24 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder setClassification(String classificiation) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public SecurityMarkingBuilder setClassification(final String classification)
+                throws InvalidSecurityMarkingException {
+            readLock.lock();
+            try {
+                if (classificationPortionMarks.containsKey(classification)) {
+                    m.classification = classificationPortionMarks.get(classification);
+                } else if (classificationBannerMarks.containsKey(classification)) {
+                    m.classification = classificationBannerMarks.get(classification);
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("'").append(classification).append("' is not a "
+                            + "valid classification component for this policy.");
+                    throw new InvalidSecurityMarkingException(sb.toString());
+                }
+            } finally {
+                readLock.unlock();
+            }
+            return this;
         }
 
         @Override
@@ -467,7 +494,55 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addSAP(String... sap) {
+        public SecurityMarkingBuilder addSAP(String... sapNames)
+                throws InvalidSecurityMarkingException {
+            //validate SAP component...we do this first (before checking if 
+            //this should be "multiple" because we want to validate regardless
+            boolean isMultiple = false;
+            if (m.sap.size() == 1 && m.sap.iterator().next().isMultiple()) {
+                isMultiple = true;
+            }
+
+            for (String sn : sapNames) {
+                SapComponent sap = null;
+
+                if (sapProgramDigraphMarks.containsKey(sn)) {
+                    sap = (sapProgramDigraphMarks.get(sn));
+                } else if (sapCodeWords.containsKey(sn)) {
+                    sap = (sapCodeWords.get(sn));
+                } else if (sapProgramNames.containsKey(sn)) {
+                    sap = (sapProgramNames.get(sn));
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("'")
+                            .append(sn)
+                            .append("' is not "
+                                    + "a valid SAP program name, code word, or "
+                                    + "digraph/trigraph for this policy.");
+                    throw new InvalidSecurityMarkingException(sb.toString());
+                }
+
+                if (isMultiple) {
+                    //disregard
+                    continue;
+                }
+
+                m.sap.add(sap);
+
+                //check if we're 4 or over now...we're using a Set, so it'll
+                //only store a SapComponent once
+                if (m.sap.size() >= 4) {
+                    isMultiple = true;
+                    m.sap.clear();
+                    m.sap.add(SapComponent.MULTIPLE);
+                }
+            }
+
+            return this;
+        }
+
+        @Override
+        public void setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -584,6 +659,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
             implements USSecurityMarking {
 
         boolean hvsaco = false;
+        Set<SapComponent> sap = new HashSet<>(); //SecurityMarkingBuilderImpl relies on this being a Set, if this is changed, update this
 
         @Override
         public SciComponent[] getSCI() {
