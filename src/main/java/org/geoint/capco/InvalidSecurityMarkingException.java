@@ -6,19 +6,25 @@ package org.geoint.capco;
  */
 public class InvalidSecurityMarkingException extends CapcoException {
 
-    public InvalidSecurityMarkingException() {
-    }
+    private final String marking;
 
-    public InvalidSecurityMarkingException(String message) {
+    public InvalidSecurityMarkingException(String marking, String message) {
         super(message);
+        this.marking = marking;
     }
 
-    public InvalidSecurityMarkingException(String message, Throwable cause) {
+    public InvalidSecurityMarkingException(String marking, String message, Throwable cause) {
         super(message, cause);
+        this.marking = marking;
     }
 
-    public InvalidSecurityMarkingException(Throwable cause) {
+    public InvalidSecurityMarkingException(String marking, Throwable cause) {
         super(cause);
+        this.marking = marking;
+    }
+
+    public String getMarking() {
+        return marking;
     }
 
 }

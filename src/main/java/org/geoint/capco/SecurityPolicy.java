@@ -24,13 +24,17 @@ public interface SecurityPolicy {
 
     /**
      * Return a {@link SecurityMarking} builder for programmatic construction of
-     * a marking.
+     * a US security marking.
      *
-     * The SecurityMarkingBuilder is NOT thread-safe.
+     * The builder is NOT thread-safe.
      *
      * @return
      */
-    SecurityMarkingBuilder builder();
+    USSecurityMarkingBuilder builder();
+    
+    JointSecurityMarkingBuilder jointBuilder();
+    
+    ForeignSecurityMarkingBuilder foreignBuilder();
 
     /**
      * Parses the provided String and returns the relevant
