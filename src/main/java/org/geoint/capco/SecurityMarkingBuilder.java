@@ -115,7 +115,7 @@ public interface SecurityMarkingBuilder {
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addDissemControl(String... countryCode)
+    SecurityMarkingBuilder addDissemControl(String... controls)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -218,4 +218,11 @@ public interface SecurityMarkingBuilder {
      */
     String[] getAvailableACCM();
 
+    /**
+     * Retrieve the SecurityMarking instance.
+     *
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    SecurityMarking build() throws InvalidSecurityMarkingException;
 }

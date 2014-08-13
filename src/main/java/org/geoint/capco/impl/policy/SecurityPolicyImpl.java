@@ -1,8 +1,11 @@
 package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -17,8 +20,12 @@ import org.geoint.capco.USSecurityMarking;
 import org.geoint.capco.spi.MutableSecurityPolicy;
 
 /**
+ * This policy implementation allows for structural knowledge of the CAPCO
+ * specification, but does not contain logic for CAPCO controls (that are not
+ * structural). Specific controls must be defined in the security policy
+ * configuration.
  *
- * Thread-safe MutableSecurityPolicy implementation.
+ * This class is thread-safe.
  */
 public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
@@ -440,11 +447,95 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
                 } else if (!aeaBannerMarks.isEmpty()
                         && (aeaBannerMarks.containsKey(componentString)
                         || aeaPortionMarks.containsKey(componentString))) {
-                    
+
                 } else {
-                    //is Dissemination component
+                    //is SCI or Dissemination component
+                    String[] controls = componentString.split(SUBCOMPONENT_SLASH_SEPARATOR);
+                    List<String> validControls = new ArrayList<>(); //either SCI or dissem controls
+
+                    if (c == 1) {
+                        //this _could_ be SCI
+                        List<String> unknownSCI = new ArrayList<>(); //caputres if there were any erronous SCI controls
+                        for (String control : controls) {
+                            if (sciBannerMarks.containsKey(control)
+                                    || sciPortionMarks.containsKey(control)) {
+                                validControls.add(control);
+                            } else {
+                                //either this is an invalid SCI...or this really is dissem controls
+                                unknownSCI.add(control);
+                            }
+                        }
+
+                        //now figure out if that component was SCI or dissem
+                        if (!validControls.isEmpty()) {
+                            if (!unknownSCI.isEmpty()) {
+                                //was SCI...but had invalid control(s)
+                                throw new InvalidSecurityMarkingException(createControlError("SCI", unknownSCI));
+                            }
+                            //was SCI
+                            mb.addSCI(validControls.toArray(new String[validControls.size()]));
+                        } else {
+                            //this is either dissem controls OR all the 
+                            //SCI controls were invalid
+                            List<String> unknownDiss = new ArrayList<>(); //caputres if there were any erronous dissemination controls
+                            for (String control : controls) {
+                                if (disBannerMarks.containsKey(control)
+                                        || disPortionMarks.containsKey(control)) {
+                                    validControls.add(control);
+                                } else {
+                                    unknownDiss.add(control);
+                                }
+                            }
+
+                            if (!validControls.isEmpty()) {
+                                //this is a dissemination component
+                                if (!unknownDiss.isEmpty()) {
+                                    //but there were some errors
+                                    throw new InvalidSecurityMarkingException(
+                                            createControlError("Dissemination", unknownDiss));
+                                }
+                                mb.addDissemControl(validControls.toArray(new String[validControls.size()]));
+                            } else {
+                                //we have no idea what kind of component this 
+                                //is suppose to be
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("Unknown security marking comonent '")
+                                        .append(componentString)
+                                        .append("'");
+                                throw new InvalidSecurityMarkingException(sb.toString());
+                            }
+                        }
+                    }
                 }
             }
+            return mb.build();
+        }
+
+        private String createControlError(String type, List<String> invalidControl) {
+            //it was an SCI block...but it also contained 
+            //unknown SCI.  create super-complex error
+            final boolean multiErrors = (invalidControl.size() > 1);
+            StringBuilder sb = new StringBuilder();
+            sb.append(type)
+                    .append(" contained ");
+            if (!multiErrors) {
+                sb.append("an ");
+            }
+            sb.append("unknown SCI ");
+            if (multiErrors) {
+                sb.append("controls: ");
+                Iterator<String> i = invalidControl.iterator();
+                while (i.hasNext()) {
+                    sb.append("'").append(i.next()).append("'");
+                    if (i.hasNext()) {
+                        sb.append(",");
+                    }
+                }
+            } else {
+                sb.append("control: ");
+                sb.append(invalidControl.get(0));
+            }
+            return sb.toString();
         }
     }
 
@@ -455,7 +546,22 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
 //    }
     private class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
-        final USSecurityMarkingImpl m = new USSecurityMarkingImpl();
+        AbstractSecurityMarkingImpl m;
+
+        private USSecurityMarkingImpl getUSMarking()
+                throws InvalidSecurityMarkingException {
+            if (m == null) {
+                m = new USSecurityMarkingImpl();
+            } else if (!(m instanceof USSecurityMarkingImpl)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Cannot add US security marking component, builder "
+                        + "is creating a ")
+                        .append(m.getClass().getName())
+                        .append(" marking");
+                throw new InvalidSecurityMarkingException(sb.toString());
+            }
+            return (USSecurityMarkingImpl) m;
+        }
 
         @Override
         public SecurityMarkingBuilder setOwningCountry(String countryCode) {
@@ -489,8 +595,28 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addSCI(String... sci) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public SecurityMarkingBuilder addSCI(String... sci)
+                throws InvalidSecurityMarkingException {
+            USSecurityMarkingImpl usm = getUSMarking();
+            readLock.lock();
+            try {
+                for (String control : sci) {
+                    if (sciBannerMarks.containsKey(control)) {
+                        usm.sci.add(sciBannerMarks.get(control));
+                    } else if (sciPortionMarks.containsKey(control)) {
+                        usm.sci.add(sciPortionMarks.get(control));
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Uknown SCI control '")
+                                .append(control)
+                                .append("' in security policy.");
+                        throw new InvalidSecurityMarkingException(sb.toString());
+                    }
+                }
+            } finally {
+                readLock.unlock();
+            }
+            return this;
         }
 
         @Override
@@ -498,52 +624,59 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
                 throws InvalidSecurityMarkingException {
             //validate SAP component...we do this first (before checking if 
             //this should be "multiple" because we want to validate regardless
-            boolean isMultiple = false;
-            if (m.sap.size() == 1 && m.sap.iterator().next().isMultiple()) {
-                isMultiple = true;
-            }
 
-            for (String sn : sapNames) {
-                SapComponent sap = null;
-
-                if (sapProgramDigraphMarks.containsKey(sn)) {
-                    sap = (sapProgramDigraphMarks.get(sn));
-                } else if (sapCodeWords.containsKey(sn)) {
-                    sap = (sapCodeWords.get(sn));
-                } else if (sapProgramNames.containsKey(sn)) {
-                    sap = (sapProgramNames.get(sn));
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("'")
-                            .append(sn)
-                            .append("' is not "
-                                    + "a valid SAP program name, code word, or "
-                                    + "digraph/trigraph for this policy.");
-                    throw new InvalidSecurityMarkingException(sb.toString());
-                }
-
-                if (isMultiple) {
-                    //disregard
-                    continue;
-                }
-
-                m.sap.add(sap);
-
-                //check if we're 4 or over now...we're using a Set, so it'll
-                //only store a SapComponent once
-                if (m.sap.size() >= 4) {
+            USSecurityMarkingImpl usm = getUSMarking();
+            readLock.lock();
+            try {
+                boolean isMultiple = false;
+                if (usm.sap.size() == 1 && usm.sap.iterator().next().isMultiple()) {
                     isMultiple = true;
-                    m.sap.clear();
-                    m.sap.add(SapComponent.MULTIPLE);
                 }
-            }
 
+                for (String sn : sapNames) {
+                    SapComponent sap = null;
+
+                    if (sapProgramDigraphMarks.containsKey(sn)) {
+                        sap = (sapProgramDigraphMarks.get(sn));
+                    } else if (sapCodeWords.containsKey(sn)) {
+                        sap = (sapCodeWords.get(sn));
+                    } else if (sapProgramNames.containsKey(sn)) {
+                        sap = (sapProgramNames.get(sn));
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("'")
+                                .append(sn)
+                                .append("' is not "
+                                        + "a valid SAP program name, code word, or "
+                                        + "digraph/trigraph for this policy.");
+                        throw new InvalidSecurityMarkingException(sb.toString());
+                    }
+
+                    if (isMultiple) {
+                        //disregard
+                        continue;
+                    }
+
+                    usm.sap.add(sap);
+
+                    //check if we're 4 or over now...we're using a Set, so it'll
+                    //only store a SapComponent once
+                    if (usm.sap.size() >= 4) {
+                        isMultiple = true;
+                        usm.sap.clear();
+                        usm.sap.add(SapComponent.MULTIPLE);
+                    }
+                }
+            } finally {
+                readLock.unlock();
+            }
             return this;
         }
 
         @Override
         public void setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            USSecurityMarkingImpl usm = getUSMarking();
+            usm.hvsaco = b;
         }
 
         @Override
@@ -567,12 +700,33 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addDissemControl(String... countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public SecurityMarkingBuilder addDissemControl(String... controls)
+                throws InvalidSecurityMarkingException {
+            USSecurityMarkingImpl usm = getUSMarking();
+            readLock.lock();
+            try {
+                for (String control : controls) {
+                    if (disPortionMarks.containsKey(control)) {
+                        usm.diss.add(disPortionMarks.get(control));
+                    } else if (disBannerMarks.containsKey(control)) {
+                        usm.diss.add(disBannerMarks.get(control));
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Unknown dissemination control '")
+                                .append(control)
+                                .append("' in security policy.");
+                        throw new InvalidSecurityMarkingException(sb.toString());
+                    }
+                }
+            } finally {
+                readLock.unlock();
+            }
+            return this;
         }
 
         @Override
-        public SecurityMarkingBuilder addACCM(String... accm) {
+        public SecurityMarkingBuilder addACCM(String... accm
+        ) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -621,6 +775,11 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
+        public SecurityMarking build() throws InvalidSecurityMarkingException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
     }
 
     private abstract class AbstractSecurityMarkingImpl implements SecurityMarking {
@@ -660,6 +819,8 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
 
         boolean hvsaco = false;
         Set<SapComponent> sap = new HashSet<>(); //SecurityMarkingBuilderImpl relies on this being a Set, if this is changed, update this
+        Set<SciComponent> sci = new HashSet<>();
+        Set<DisseminationComponent> diss = new HashSet<>();
 
         @Override
         public SciComponent[] getSCI() {
