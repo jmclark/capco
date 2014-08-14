@@ -1,4 +1,4 @@
-package org.geoint.capco.impl.policy;
+package org.geoint.capco.marking;
 
 import java.util.ArrayList;
 import java.util.Arrays;

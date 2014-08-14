@@ -1,5 +1,7 @@
 package org.geoint.capco;
 
+import org.geoint.capco.marking.SecurityMarking;
+
 /**
  * Indicates an object can contain classified data.
  */

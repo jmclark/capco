@@ -1,5 +1,14 @@
 package org.geoint.capco.impl.policy;
 
+import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.DisplayToComponent;
+import org.geoint.capco.marking.SciComponent;
+import org.geoint.capco.marking.AeaComponent;
+import org.geoint.capco.marking.AccmComponent;
+import org.geoint.capco.marking.SapComponent;
+import org.geoint.capco.marking.ClassificationComponent;
+import org.geoint.capco.marking.RelToComponent;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,12 +20,14 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.ForeignSecurityMarking;
+import org.geoint.capco.ForeignSecurityMarkingBuilder;
 import org.geoint.capco.InvalidSecurityMarkingException;
 import org.geoint.capco.JointSecurityMarking;
-import org.geoint.capco.SecurityMarking;
-import org.geoint.capco.SecurityMarkingBuilder;
+import org.geoint.capco.JointSecurityMarkingBuilder;
+import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.USSecurityMarking;
+import org.geoint.capco.USSecurityMarkingBuilder;
 import org.geoint.capco.spi.MutableSecurityPolicy;
 
 /**
@@ -85,8 +96,18 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     }
 
     @Override
-    public SecurityMarkingBuilder builder() {
-        return new SecurityMarkingBuilderImpl();
+    public USSecurityMarkingBuilder builder() {
+        return new USSecurityMarkingBuilderImpl();
+    }
+
+    @Override
+    public JointSecurityMarkingBuilder jointBuilder() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ForeignSecurityMarkingBuilder foreignBuilder() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -402,11 +423,12 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
     }
 
     /**
-     * Finite-state machine used to parse/validate a US security marking
+     * parse/validate a US security marking.
      *
      * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
      * DISSEM
-     *
+     * <p>
+     * This parser is thread-safe.
      */
     private class USMarkingParser {
 
@@ -416,21 +438,21 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         /**
-         *
          * @param context the context of a security marking (ie parsing a
          * portion mark within a page marking)
          */
         public USMarkingParser(SecurityMarking context) {
             this.context = context;
         }
-//        private USFsmComponent component;
 
         public SecurityMarking parse(String marking)
                 throws InvalidSecurityMarkingException {
             if (marking == null) {
-                throw new InvalidSecurityMarkingException(marking, "Marking cannot be null.");
+                throw new InvalidSecurityMarkingException(marking, "Marking is null.");
             }
 
+            
+            
             String[] components = marking.split(COMPONENT_SEPARATOR);
 
             if (components.length == 0) {
@@ -444,7 +466,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
                 throw new InvalidSecurityMarkingException(marking, sb.toString());
             }
 
-            final SecurityMarkingBuilder mb = builder();
+            final USSecurityMarkingBuilder mb = builder();
 
             //component 0 should be the classification component
             mb.setClassification(components[0].toUpperCase());
@@ -596,12 +618,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
     }
 
-//    private enum USFsmComponent {
-//
-//        //ordinal sequence is significant
-//        classification, sci, sap, awa, fgi, dissem, other;
-//    }
-    private class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
+    private class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
         AbstractSecurityMarkingImpl m;
 
@@ -621,17 +638,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder setOwningCountry(String countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public SecurityMarkingBuilder addContributingCountry(String... countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public SecurityMarkingBuilder setClassification(final String classification)
+        public USSecurityMarkingBuilder setClassification(final String classification)
                 throws InvalidSecurityMarkingException {
             readLock.lock();
             try {
@@ -652,7 +659,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addSCI(String... sci)
+        public USSecurityMarkingBuilder addSCI(String... sci)
                 throws InvalidSecurityMarkingException {
             USSecurityMarkingImpl usm = getUSMarking();
             readLock.lock();
@@ -677,7 +684,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addSAP(String... sapNames)
+        public USSecurityMarkingBuilder addSAP(String... sapNames)
                 throws InvalidSecurityMarkingException {
             //validate SAP component...we do this first (before checking if 
             //this should be "multiple" because we want to validate regardless
@@ -731,32 +738,33 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public void setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
+        public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
             addDissemControl(HVSACO_IDENTIFIER);
+            return this;
         }
 
         @Override
-        public SecurityMarkingBuilder setAEA(String aea) {
+        public USSecurityMarkingBuilder setAEA(String aea) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public SecurityMarkingBuilder addFGICountry(String... countryCode) {
+        public USSecurityMarkingBuilder addFGICountry(String... countryCode) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public SecurityMarkingBuilder addRelCountry(String... countryCode) {
+        public USSecurityMarkingBuilder addRelCountry(String... countryCode) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public SecurityMarkingBuilder addDisplayCountry(String... countryCode) {
+        public USSecurityMarkingBuilder addDisplayCountry(String... countryCode) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public SecurityMarkingBuilder addDissemControl(String... controls)
+        public USSecurityMarkingBuilder addDissemControl(String... controls)
                 throws InvalidSecurityMarkingException {
             USSecurityMarkingImpl usm = getUSMarking();
             readLock.lock();
@@ -781,8 +789,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarkingBuilder addACCM(String... accm
-        ) {
+        public USSecurityMarkingBuilder addACCM(String... accm) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -832,7 +839,7 @@ public class SecurityPolicyImpl implements MutableSecurityPolicy {
         }
 
         @Override
-        public SecurityMarking build() throws InvalidSecurityMarkingException {
+        public USSecurityMarking build() throws InvalidSecurityMarkingException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

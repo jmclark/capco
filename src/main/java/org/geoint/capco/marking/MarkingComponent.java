@@ -1,8 +1,9 @@
-package org.geoint.capco.impl.policy;
+package org.geoint.capco.marking;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.geoint.capco.impl.policy.ComponentRestriction;
 
 /**
  *
@@ -11,7 +12,6 @@ public abstract class MarkingComponent {
 
     private final String portion;
     private final String banner;
-    private final List<ComponentRestriction> restrictions = new ArrayList<>();
 
     public MarkingComponent(String portion, String banner) {
         this.portion = portion.intern();
@@ -24,14 +24,6 @@ public abstract class MarkingComponent {
 
     public String getBanner() {
         return banner;
-    }
-
-    public List<ComponentRestriction> getRestrictions() {
-        return restrictions;
-    }
-
-    public void addRestriction(ComponentRestriction restriction) {
-        this.restrictions.add(restriction);
     }
 
     @Override

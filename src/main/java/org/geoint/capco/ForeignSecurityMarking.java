@@ -1,6 +1,7 @@
 package org.geoint.capco;
 
-import org.geoint.capco.impl.policy.Country;
+import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.marking.Country;
 
 /**
  * For classified non-U.S. documents

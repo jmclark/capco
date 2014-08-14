@@ -4,7 +4,18 @@ package org.geoint.capco;
 /**
  *
  */
-public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
+public interface USSecurityMarkingBuilder {
+
+    /**
+     * Sets the base classification of the security marking.
+     *
+     * @param classificiation
+     * @return
+     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     */
+    USSecurityMarkingBuilder setClassification(String classificiation)
+            throws InvalidSecurityMarkingException;
+
 
     /**
      * Adds a Sensitive Compartmented Information (SCI) control system.
@@ -13,7 +24,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addSCI(String... sci)
+    USSecurityMarkingBuilder addSCI(String... sci)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -24,7 +35,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addSAP(String... sapNames)
+    USSecurityMarkingBuilder addSAP(String... sapNames)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -34,7 +45,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder setAEA(String aea)
+    USSecurityMarkingBuilder setAEA(String aea)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -45,7 +56,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addFGICountry(String... countryCode)
+    USSecurityMarkingBuilder addFGICountry(String... countryCode)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -55,7 +66,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addRelCountry(String... countryCode)
+    USSecurityMarkingBuilder addRelCountry(String... countryCode)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -65,7 +76,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addDisplayCountry(String... countryCode)
+    USSecurityMarkingBuilder addDisplayCountry(String... countryCode)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -75,7 +86,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addDissemControl(String... controls)
+    USSecurityMarkingBuilder addDissemControl(String... controls)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -85,7 +96,7 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    SecurityMarkingBuilder addACCM(String... accm)
+    USSecurityMarkingBuilder addACCM(String... accm)
             throws InvalidSecurityMarkingException;
 
     /**
@@ -101,8 +112,89 @@ public interface USSecurityMarkingBuilder extends SecurityMarkingBuilder{
      * HVSACO material is conveyed in program classification guides.
      *
      * @param b
+     * @return 
      * @throws InvalidSecurityMarkingException
      */
-    public void setSpecialAccessChannelsOnly(boolean b)
+    public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b)
             throws InvalidSecurityMarkingException;
+    
+    
+    /**
+     * Returns the available classifications based on the policy, the requesting
+     * users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableClassifications();
+    
+    /**
+     * Returns all the available SCI controls based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableSCI();
+
+    /**
+     * Returns all the available SAP controls based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableSAP();
+
+    /**
+     * Returns all the available FGI countries based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableFGICountries();
+
+    /**
+     * Returns all the available AEA settings based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableAEA();
+
+    /**
+     * Returns all the available releasable country codes based on the policy,
+     * the requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableRelCountries();
+
+    /**
+     * Returns all the available display country codes based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableDisplayCountries();
+
+    /**
+     * Returns all the available dissemination controls based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableDissemCountrols();
+
+    /**
+     * Returns all the available ACCM controls based on the policy, the
+     * requesting users permissions, and builders current state.
+     *
+     * @return
+     */
+    String[] getAvailableACCM();
+/**
+     * Retrieve the SecurityMarking instance.
+     *
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    USSecurityMarking build() throws InvalidSecurityMarkingException;
 }

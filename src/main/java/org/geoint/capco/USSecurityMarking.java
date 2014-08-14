@@ -1,11 +1,12 @@
 package org.geoint.capco;
 
-import org.geoint.capco.impl.policy.AccmComponent;
-import org.geoint.capco.impl.policy.AeaComponent;
-import org.geoint.capco.impl.policy.Country;
-import org.geoint.capco.impl.policy.DisseminationComponent;
-import org.geoint.capco.impl.policy.SapComponent;
-import org.geoint.capco.impl.policy.SciComponent;
+import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.marking.AccmComponent;
+import org.geoint.capco.marking.AeaComponent;
+import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.SapComponent;
+import org.geoint.capco.marking.SciComponent;
 
 /**
  * CAPCO SecurityMarking for US produced intelligence.

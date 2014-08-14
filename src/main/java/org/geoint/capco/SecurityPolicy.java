@@ -1,5 +1,7 @@
 package org.geoint.capco;
 
+import org.geoint.capco.marking.SecurityMarking;
+
 /**
  * A security policy is configured to manage the available security marking
  * options and restrictions, allowing for applications to be configured for

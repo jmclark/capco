@@ -1,6 +1,6 @@
-package org.geoint.capco;
+package org.geoint.capco.marking;
 
-import org.geoint.capco.impl.policy.ClassificationComponent;
+import org.geoint.capco.SecurityPolicy;
 
 /**
  * Intelligence Community (IC)/CAPCO classification marking.

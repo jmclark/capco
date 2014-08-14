@@ -1,6 +1,6 @@
 package org.geoint.capco;
 
-import org.geoint.capco.impl.policy.Country;
+import org.geoint.capco.marking.Country;
 
 /**
  * Joint classification markings are used on information owned or produced by

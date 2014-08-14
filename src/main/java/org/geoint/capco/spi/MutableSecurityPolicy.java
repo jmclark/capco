@@ -1,14 +1,14 @@
 package org.geoint.capco.spi;
 
 import org.geoint.capco.SecurityPolicy;
-import org.geoint.capco.impl.policy.AeaComponent;
-import org.geoint.capco.impl.policy.ClassificationComponent;
-import org.geoint.capco.impl.policy.Country;
-import org.geoint.capco.impl.policy.DisplayToComponent;
-import org.geoint.capco.impl.policy.DisseminationComponent;
-import org.geoint.capco.impl.policy.RelToComponent;
-import org.geoint.capco.impl.policy.SapComponent;
-import org.geoint.capco.impl.policy.SciComponent;
+import org.geoint.capco.marking.AeaComponent;
+import org.geoint.capco.marking.ClassificationComponent;
+import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.DisplayToComponent;
+import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.RelToComponent;
+import org.geoint.capco.marking.SapComponent;
+import org.geoint.capco.marking.SciComponent;
 
 /**
  *
