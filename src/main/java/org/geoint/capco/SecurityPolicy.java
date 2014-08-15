@@ -25,17 +25,29 @@ public interface SecurityPolicy {
     String getName();
 
     /**
-     * Return a {@link SecurityMarking} builder for programmatic construction of
-     * a US security marking.
+     * Return a {@link USSecurityMarking} builder for programmatic construction
+     * of a US security marking.
      *
      * The builder is NOT thread-safe.
      *
      * @return
      */
     USSecurityMarkingBuilder builder();
-    
+
+    /**
+     * Returns a builder for programmatic construction of a joint security
+     * marking.
+     *
+     * @return
+     */
     JointSecurityMarkingBuilder jointBuilder();
-    
+
+    /**
+     * Returns a builder for programmatic construction of a foreign security
+     * marking.
+     *
+     * @return
+     */
     ForeignSecurityMarkingBuilder foreignBuilder();
 
     /**

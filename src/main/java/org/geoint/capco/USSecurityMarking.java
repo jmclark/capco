@@ -13,6 +13,15 @@ import org.geoint.capco.marking.SciComponent;
  */
 public interface USSecurityMarking extends SecurityMarking {
 
+    static final String SAP_BANNER_IDENTIFIER = "SPECIAL ACCESS REQUIRED-";
+    static final String SAP_PORTION_IDENTIFIER = "SAR-";
+    static final String REL_PORTION_IDENTIFIER = "REL ";
+    static final String RELTO_IDENTIFIER = "REL TO ";
+    static final String DISPLAY_IDENTIFIER = "DISPLAY ONLY ";
+    static final String HVSACO_IDENTIFIER = "HVSACO";
+    static final String FGI_IDENTIFIER = "FGI ";
+    static final String ACCM_IDENTIFIER = "ACCM-";
+
     /**
      * Return the Sensitive Compartmented Information (SCI) components.
      *

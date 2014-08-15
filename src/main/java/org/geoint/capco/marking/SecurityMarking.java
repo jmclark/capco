@@ -4,11 +4,17 @@ import org.geoint.capco.SecurityPolicy;
 
 /**
  * Intelligence Community (IC)/CAPCO classification marking.
- * 
-
- * 
+ *
+ *
+ *
  */
 public interface SecurityMarking {
+
+    //constants
+    static final String COMPONENT_SEPARATOR = "//";
+    static final String SUBCOMPONENT_SLASH_SEPARATOR = "/";
+    static final String SUBCOMPONENT_SPACE_SEPARATOR = " ";
+    static final String COUNTRY_SEPARATOR = ", ";
 
     /**
      * Returns the {@link SecurityPolicy} that this SecurityMarking has been
@@ -52,11 +58,11 @@ public interface SecurityMarking {
 
     /**
      * Serialize SecurityMarking as CAPCO banner marking.
-     * 
-     * @return 
+     *
+     * @return
      */
     String asBanner();
-    
+
     /**
      * Binary serialization of the marking.
      *

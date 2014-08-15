@@ -1,9 +1,13 @@
 
 package org.geoint.capco.impl.policy;
 
+import org.geoint.capco.marking.SecurityMarking;
+
 /**
  *
  */
-public abstract class ComponentRestriction {
+public interface ComponentRestriction {
+
+    void validate(SecurityMarking marking);
 
 }
