@@ -1,5 +1,9 @@
 package org.geoint.capco;
 
+import org.geoint.capco.marking.USSecurityMarkingBuilder;
+import org.geoint.capco.marking.InvalidSecurityMarkingException;
+import org.geoint.capco.marking.JointSecurityMarkingBuilder;
+import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
 import org.geoint.capco.marking.SecurityMarking;
 
 /**
@@ -62,6 +66,18 @@ public interface SecurityPolicy {
     SecurityMarking valueOf(String marking) throws InvalidSecurityMarkingException;
 
     /**
+     * Parses the provided String within the context of the provided overall
+     * (banner) security marking.
+     *
+     * @param context
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    SecurityMarking valueOf(SecurityMarking context, String marking)
+            throws InvalidSecurityMarkingException;
+
+    /**
      * Parse the provided byte array and return the relevant
      * {@link SecurityMarking} for this policy.
      *
@@ -71,6 +87,18 @@ public interface SecurityPolicy {
      * security marking for this policy
      */
     SecurityMarking valueOf(byte[] marking) throws InvalidSecurityMarkingException;
+
+    /**
+     * Parses the provided byte array within the context of the provided overall
+     * (banner) security marking.
+     *
+     * @param context
+     * @param marking
+     * @return
+     * @throws InvalidSecurityMarkingException
+     */
+    SecurityMarking valueOf(SecurityMarking context, byte[] marking)
+            throws InvalidSecurityMarkingException;
 
     /**
      * Compares the security markings to determine if the second parameter is
@@ -89,76 +117,76 @@ public interface SecurityPolicy {
      * @return
      */
     SecurityMarking merge(SecurityMarking... markings);
-
-    /**
-     * Return all the potential classification values based on the policy and
-     * the requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllClassifications();
-
-    /**
-     * Return all the potential SCI values based on the policy and the
-     * requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllSCI();
-
-    /**
-     * Return all the potential SAP values based on the policy and the
-     * requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllSAP();
-
-    /**
-     * Return all the potential FGI country codes based on the policy and the
-     * requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllFGICountries();
-
-    /**
-     * Return all the AEA settings based on the policy and the requesting users
-     * permissions.
-     *
-     * @return
-     */
-    String[] getAllAEA();
-
-    /**
-     * Return all the potential REL country codes based on the policy and the
-     * requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllRelCountries();
-
-    /**
-     * Return all the potential DISPLAY TO country codes based on the policy and
-     * the requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllDisplayCountries();
-
-    /**
-     * Return all the potential dissemination controls based on the policy and
-     * the requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllDissemControls();
-
-    /**
-     * Return all the potential ACCM control words based on the policy and the
-     * requesting users permissions.
-     *
-     * @return
-     */
-    String[] getAllACCM();
+//
+//    /**
+//     * Return all the potential classification values based on the policy and
+//     * the requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllClassifications();
+//
+//    /**
+//     * Return all the potential SCI values based on the policy and the
+//     * requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllSCI();
+//
+//    /**
+//     * Return all the potential SAP values based on the policy and the
+//     * requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllSAP();
+//
+//    /**
+//     * Return all the potential FGI country codes based on the policy and the
+//     * requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllFGICountries();
+//
+//    /**
+//     * Return all the AEA settings based on the policy and the requesting users
+//     * permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllAEA();
+//
+//    /**
+//     * Return all the potential REL country codes based on the policy and the
+//     * requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllRelCountries();
+//
+//    /**
+//     * Return all the potential DISPLAY TO country codes based on the policy and
+//     * the requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllDisplayCountries();
+//
+//    /**
+//     * Return all the potential dissemination controls based on the policy and
+//     * the requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllDissemControls();
+//
+//    /**
+//     * Return all the potential ACCM control words based on the policy and the
+//     * requesting users permissions.
+//     *
+//     * @return
+//     */
+//    String[] getAllACCM();
 }

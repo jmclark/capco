@@ -1,33 +1,28 @@
 package org.geoint.capco.impl.policy;
 
-import org.geoint.capco.marking.Country;
-import org.geoint.capco.marking.DisseminationComponent;
-import org.geoint.capco.marking.DisplayToComponent;
-import org.geoint.capco.marking.SciComponent;
-import org.geoint.capco.marking.AeaComponent;
-import org.geoint.capco.marking.AccmComponent;
-import org.geoint.capco.marking.SapComponent;
-import org.geoint.capco.marking.ClassificationComponent;
-import org.geoint.capco.marking.RelToComponent;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.geoint.capco.ForeignSecurityMarking;
-import org.geoint.capco.ForeignSecurityMarkingBuilder;
-import org.geoint.capco.InvalidSecurityMarkingException;
-import org.geoint.capco.JointSecurityMarking;
-import org.geoint.capco.JointSecurityMarkingBuilder;
-import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.marking.ForeignSecurityMarking;
+import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
+import org.geoint.capco.marking.InvalidSecurityMarkingException;
+import org.geoint.capco.marking.JointSecurityMarking;
+import org.geoint.capco.marking.JointSecurityMarkingBuilder;
 import org.geoint.capco.SecurityPolicy;
-import org.geoint.capco.USSecurityMarking;
-import org.geoint.capco.USSecurityMarkingBuilder;
+import org.geoint.capco.marking.USSecurityMarking;
+import org.geoint.capco.marking.USSecurityMarkingBuilder;
+import org.geoint.capco.impl.marking.USSecurityMarkingBuilderImpl;
+import org.geoint.capco.impl.marking.USSecurityMarkingParserImpl;
+import org.geoint.capco.marking.AccmComponent;
+import org.geoint.capco.marking.AeaComponent;
+import org.geoint.capco.marking.ClassificationComponent;
+import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.SapComponent;
+import org.geoint.capco.marking.SciComponent;
+import org.geoint.capco.marking.SecurityMarking;
 
 /**
  * This policy implementation allows for structural knowledge of the CAPCO
@@ -45,7 +40,6 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     private final Map<String, Country> countries = new HashMap<>(); //key is trigraph
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
 
-
     public SecurityPolicyImpl(String name) {
         this.name = name;
     }
@@ -57,7 +51,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
 
     @Override
     public USSecurityMarkingBuilder builder() {
-        return new USSecurityMarkingBuilder();
+        return new USSecurityMarkingBuilderImpl();
     }
 
     @Override
@@ -70,40 +64,37 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
-    /**
-     * Expects the byte[] is a UTF-8 string
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
     @Override
     public SecurityMarking valueOf(byte[] marking) throws InvalidSecurityMarkingException {
-        return valueOf(new String(marking, MARKING_CHARSET));
+        return valueOf(null, marking);
     }
 
-    /**
-     * Parses the CAPCO classification marking.
-     *
-     * @param marking
-     * @return
-     * @throws InvalidSecurityMarkingException
-     */
+    @Override
+    public SecurityMarking valueOf(SecurityMarking context, byte[] marking)
+            throws InvalidSecurityMarkingException {
+        return valueOf(context, new String(marking, MARKING_CHARSET));
+    }
+
     @Override
     public SecurityMarking valueOf(String marking)
             throws InvalidSecurityMarkingException {
-        if (marking.startsWith(AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR)) {
+        return valueOf(null, marking);
+    }
+
+    @Override
+    public SecurityMarking valueOf(SecurityMarking context, String marking)
+            throws InvalidSecurityMarkingException {
+        if (marking.startsWith(SecurityMarking.COMPONENT_SEPARATOR)) {
             if (marking.startsWith(
-                    AbstractSecurityMarkingImpl.COMPONENT_SEPARATOR
-                    + JointSecurityMarkingImpl.HEADER
+                    SecurityMarking.COMPONENT_SEPARATOR
+                    + JointSecurityMarking.HEADER
             )) {
-                return valueOfJoint(marking);
+                return valueOfJoint(context, marking);
             } else {
-                return valueOfNonUS(marking);
+                return valueOfForeign(context, marking);
             }
         }
-        return valueOfUS(marking);
+        return valueOfUS(context, marking);
     }
 
     /**
@@ -115,7 +106,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfJoint(String marking)
+    private JointSecurityMarking valueOfJoint(SecurityMarking context, String marking)
             throws InvalidSecurityMarkingException {
         throw new InvalidSecurityMarkingException(marking, "Joing markings not yet supported by policy.");
     }
@@ -129,7 +120,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfNonUS(String marking)
+    private ForeignSecurityMarking valueOfForeign(SecurityMarking context, String marking)
             throws InvalidSecurityMarkingException {
         throw new InvalidSecurityMarkingException(marking, "NON-US markings not yet supported by policy.");
     }
@@ -144,9 +135,10 @@ public class SecurityPolicyImpl implements SecurityPolicy {
      * @return
      * @throws InvalidSecurityMarkingException
      */
-    private SecurityMarking valueOfUS(String marking)
+    private USSecurityMarking valueOfUS(SecurityMarking context, String marking)
             throws InvalidSecurityMarkingException {
-        return new USMarkingParser().parse(marking);
+        USSecurityMarkingParserImpl parser = new USSecurityMarkingParserImpl(this);
+        return parser.parse(context, marking);
     }
 
     @Override
@@ -159,306 +151,50 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public String[] getAllClassifications() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllSCI() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllSAP() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllFGICountries() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllAEA() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllRelCountries() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllDisplayCountries() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllDissemControls() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String[] getAllACCM() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
-     * parse/validate a US security marking.
-     *
-     * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
-     * DISSEM
-     * <p>
-     * This parser is thread-safe.
-     */
-    private class USMarkingParser {
-
-        private SecurityMarking context;
-
-        public USMarkingParser() {
-        }
-
-        /**
-         * @param context the context of a security marking (ie parsing a
-         * portion mark within a page marking)
-         */
-        public USMarkingParser(SecurityMarking context) {
-            this.context = context;
-        }
-
-        public SecurityMarking parse(String marking)
-                throws InvalidSecurityMarkingException {
-            
-        }
-
-
-    private class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
-
-        AbstractSecurityMarkingImpl m;
-
-        private USSecurityMarkingImpl getUSMarking()
-                throws InvalidSecurityMarkingException {
-            if (m == null) {
-                m = new USSecurityMarkingImpl();
-            } else if (!(m instanceof USSecurityMarkingImpl)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Cannot add US security marking component, builder "
-                        + "is creating a ")
-                        .append(m.getClass().getName())
-                        .append(" marking");
-                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-            }
-            return (USSecurityMarkingImpl) m;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder setClassification(final String classification)
-                throws InvalidSecurityMarkingException {
-            readLock.lock();
-            try {
-                if (classificationPortionMarks.containsKey(classification)) {
-                    m.classification = classificationPortionMarks.get(classification);
-                } else if (classificationBannerMarks.containsKey(classification)) {
-                    m.classification = classificationBannerMarks.get(classification);
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("'").append(classification).append("' is not a "
-                            + "valid classification component for this policy.");
-                    throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                }
-            } finally {
-                readLock.unlock();
-            }
-            return this;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addSCI(String... sci)
-                throws InvalidSecurityMarkingException {
-            USSecurityMarkingImpl usm = getUSMarking();
-            readLock.lock();
-            try {
-                for (String control : sci) {
-                    if (sciBannerMarks.containsKey(control)) {
-                        usm.sci.add(sciBannerMarks.get(control));
-                    } else if (sciPortionMarks.containsKey(control)) {
-                        usm.sci.add(sciPortionMarks.get(control));
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Uknown SCI control '")
-                                .append(control)
-                                .append("' in security policy.");
-                        throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                    }
-                }
-            } finally {
-                readLock.unlock();
-            }
-            return this;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addSAP(String... sapNames)
-                throws InvalidSecurityMarkingException {
-            //validate SAP component...we do this first (before checking if 
-            //this should be "multiple" because we want to validate regardless
-
-            USSecurityMarkingImpl usm = getUSMarking();
-            readLock.lock();
-            try {
-                boolean isMultiple = false;
-                if (usm.sap.size() == 1 && usm.sap.iterator().next().isMultiple()) {
-                    isMultiple = true;
-                }
-
-                for (String sn : sapNames) {
-                    SapComponent sap = null;
-
-                    if (sapProgramDigraphMarks.containsKey(sn)) {
-                        sap = (sapProgramDigraphMarks.get(sn));
-                    } else if (sapCodeWords.containsKey(sn)) {
-                        sap = (sapCodeWords.get(sn));
-                    } else if (sapProgramNames.containsKey(sn)) {
-                        sap = (sapProgramNames.get(sn));
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("'")
-                                .append(sn)
-                                .append("' is not "
-                                        + "a valid SAP program name, code word, or "
-                                        + "digraph/trigraph for this policy.");
-                        throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                    }
-
-                    if (isMultiple) {
-                        //disregard
-                        continue;
-                    }
-
-                    usm.sap.add(sap);
-
-                    //check if we're 4 or over now...we're using a Set, so it'll
-                    //only store a SapComponent once
-                    if (usm.sap.size() >= 4) {
-                        isMultiple = true;
-                        usm.sap.clear();
-                        usm.sap.add(SapComponent.MULTIPLE);
-                    }
-                }
-            } finally {
-                readLock.unlock();
-            }
-            return this;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
-            addDissemControl(HVSACO_IDENTIFIER);
-            return this;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder setAEA(String aea) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addFGICountry(String... countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addRelCountry(String... countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addDisplayCountry(String... countryCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addDissemControl(String... controls)
-                throws InvalidSecurityMarkingException {
-            USSecurityMarkingImpl usm = getUSMarking();
-            readLock.lock();
-            try {
-                for (String control : controls) {
-                    if (disPortionMarks.containsKey(control)) {
-                        usm.diss.add(disPortionMarks.get(control));
-                    } else if (disBannerMarks.containsKey(control)) {
-                        usm.diss.add(disBannerMarks.get(control));
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Unknown dissemination control '")
-                                .append(control)
-                                .append("' in security policy.");
-                        throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                    }
-                }
-            } finally {
-                readLock.unlock();
-            }
-            return this;
-        }
-
-        @Override
-        public USSecurityMarkingBuilder addACCM(String... accm) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableClassifications() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableSCI() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableSAP() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableFGICountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableAEA() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableRelCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableDisplayCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableDissemCountrols() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String[] getAvailableACCM() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public USSecurityMarking build() throws InvalidSecurityMarkingException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-    }
+//    @Override
+//    public String[] getAllClassifications() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllSCI() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllSAP() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllFGICountries() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllAEA() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllRelCountries() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllDisplayCountries() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllDissemControls() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public String[] getAllACCM() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 
     private abstract class AbstractSecurityMarkingImpl implements SecurityMarking {
 
@@ -487,111 +223,6 @@ public class SecurityPolicyImpl implements SecurityPolicy {
 
         @Override
         public byte[] asBytes() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-    }
-
-    private class USSecurityMarkingImpl extends AbstractSecurityMarkingImpl
-            implements USSecurityMarking {
-
-        Set<SapComponent> sap = new HashSet<>(); //SecurityMarkingBuilderImpl relies on this being a Set, if this is changed, update this
-        Set<SciComponent> sci = new HashSet<>();
-        Set<DisseminationComponent> diss = new HashSet<>();
-
-        @Override
-        public SciComponent[] getSCI() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public SapComponent[] getSAP() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public boolean isHVSACO() {
-            return diss.contains(new DisseminationComponent(HVSACO_IDENTIFIER, HVSACO_IDENTIFIER));
-        }
-
-        @Override
-        public AeaComponent getAEA() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Country[] getFGICountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Country[] getRelCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Country[] getDisplayCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public DisseminationComponent[] getDissemControls() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public AccmComponent[] getAccm() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asPortion() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asBanner() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-    }
-
-    private class JointSecurityMarkingImpl extends USSecurityMarkingImpl
-            implements JointSecurityMarking {
-
-        public static final String HEADER = "//JOINT";
-
-        @Override
-        public Country[] getContributingCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asPortion() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asBanner() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-    }
-
-    private class ForeignSecurityMarkingImpl extends AbstractSecurityMarkingImpl
-            implements ForeignSecurityMarking {
-
-        @Override
-        public String asPortion() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asBanner() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Country getOriginatingCountry() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

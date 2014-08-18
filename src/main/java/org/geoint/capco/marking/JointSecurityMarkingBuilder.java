@@ -1,9 +1,9 @@
-package org.geoint.capco;
+package org.geoint.capco.marking;
 
 /**
  *
  */
-public interface JointSecurityMarkingBuilder extends USSecurityMarkingBuilder {
+public interface JointSecurityMarkingBuilder {
 
     /**
      * Add a contributing country.
@@ -25,7 +25,6 @@ public interface JointSecurityMarkingBuilder extends USSecurityMarkingBuilder {
      * @return
      * @throws org.geoint.capco.InvalidSecurityMarkingException
      */
-    @Override
     JointSecurityMarkingBuilder setClassification(String classificiation)
             throws InvalidSecurityMarkingException;
 
@@ -35,7 +34,6 @@ public interface JointSecurityMarkingBuilder extends USSecurityMarkingBuilder {
      *
      * @return
      */
-    @Override
     String[] getAvailableClassifications();
 
     /**

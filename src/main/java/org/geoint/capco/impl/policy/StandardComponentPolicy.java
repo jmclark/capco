@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.CapcoException;
 import org.geoint.capco.DuplicateComponentException;
-import org.geoint.capco.InvalidSecurityMarkingException;
+import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 

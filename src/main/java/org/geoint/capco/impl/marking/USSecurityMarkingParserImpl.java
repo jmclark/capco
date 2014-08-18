@@ -1,19 +1,25 @@
-package org.geoint.capco.impl;
+package org.geoint.capco.impl.marking;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.geoint.capco.InvalidSecurityMarkingException;
+import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.SecurityPolicy;
-import org.geoint.capco.USSecurityMarking;
-import static org.geoint.capco.USSecurityMarking.*;
-import org.geoint.capco.USSecurityMarkingBuilder;
+import org.geoint.capco.marking.USSecurityMarking;
+import static org.geoint.capco.marking.USSecurityMarking.*;
+import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.SecurityMarking;
 import static org.geoint.capco.marking.SecurityMarking.*;
 import org.geoint.capco.spi.SecurityMarkingParser;
 
 /**
+ * parse/validate a US security marking.
  *
+ * CLASSIFICATION//SCI/SCI-SUBCONTROL//SAP//AEA//FGI//DISSEM/DISSEM//OTHER
+ * DISSEM
+ * <p>
+ * This parser is thread-safe.
  */
 public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurityMarking> {
 
@@ -22,7 +28,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
     }
 
     @Override
-    public USSecurityMarking parse(USSecurityMarking context, String marking)
+    public USSecurityMarking parse(SecurityMarking context, String marking)
             throws InvalidSecurityMarkingException {
         if (marking == null) {
             throw new InvalidSecurityMarkingException(marking, "Marking is null.");
@@ -36,7 +42,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
                     .append(marking)
                     .append("' is not a valid security marking within the "
                             + "Security Policy '")
-                    .append(getName())
+                    .append(policy().getName())
                     .append("'.");
             throw new InvalidSecurityMarkingException(marking, sb.toString());
         }
@@ -172,7 +178,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
     }
 
     private String createControlError(String type, List<String> invalidControl) {
-            //it was an SCI block...but it also contained 
+        //it was an SCI block...but it also contained 
         //unknown SCI.  create super-complex error
         final boolean multiErrors = (invalidControl.size() > 1);
         StringBuilder sb = new StringBuilder();
@@ -198,5 +204,3 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
         return sb.toString();
     }
 }
-
-

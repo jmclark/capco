@@ -1,4 +1,4 @@
-package org.geoint.capco;
+package org.geoint.capco.marking;
 
 /**
  *
@@ -36,6 +36,16 @@ public interface ForeignSecurityMarkingBuilder {
      * @return
      */
     String[] getAvailableClassifications();
+
+    /**
+     * Add a releasable country dissemination control.
+     *
+     * @param countryCode
+     * @return
+     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     */
+    USSecurityMarkingBuilder addRelCountry(String... countryCode)
+            throws InvalidSecurityMarkingException;
 
     /**
      * Retrieve the SecurityMarking instance.

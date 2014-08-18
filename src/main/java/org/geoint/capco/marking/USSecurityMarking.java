@@ -1,4 +1,4 @@
-package org.geoint.capco;
+package org.geoint.capco.marking;
 
 import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.marking.AccmComponent;

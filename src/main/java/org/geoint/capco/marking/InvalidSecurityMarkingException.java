@@ -1,4 +1,6 @@
-package org.geoint.capco;
+package org.geoint.capco.marking;
+
+import org.geoint.capco.CapcoException;
 
 /**
  * Thrown when a value cannot be converted into a policy-constrained
