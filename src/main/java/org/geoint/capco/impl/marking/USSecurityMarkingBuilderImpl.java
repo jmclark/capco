@@ -18,20 +18,22 @@ import org.geoint.capco.marking.SecurityMarking;
 import static org.geoint.capco.marking.USSecurityMarking.HVSACO_IDENTIFIER;
 
 /**
- * Create an instasnce of a USSecurityMarking.
+ * Create an instance of a USSecurityMarking.
  *
  * This builder is not thread-safe.
  */
 public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
+    private final SecurityPolicyImpl policy;
     private final USSecurityMarkingImpl m;
     private final SecurityMarking context;
 
-    public USSecurityMarkingBuilderImpl(SecurityPolicy policy) {
+    public USSecurityMarkingBuilderImpl(SecurityPolicyImpl policy) {
         this(policy, null);
     }
 
-    public USSecurityMarkingBuilderImpl(SecurityPolicy policy, SecurityMarking context) {
+    public USSecurityMarkingBuilderImpl(SecurityPolicyImpl policy, SecurityMarking context) {
+        this.policy = policy;
         this.m = new USSecurityMarkingImpl(policy);
         this.context = context;
     }
@@ -39,20 +41,20 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
     @Override
     public USSecurityMarkingBuilder setClassification(final String classification)
             throws InvalidSecurityMarkingException {
-        readLock.lock();
-        try {
-            if (classificationPortionMarks.containsKey(classification)) {
-                m.classification = classificationPortionMarks.get(classification);
-            } else if (classificationBannerMarks.containsKey(classification)) {
-                m.classification = classificationBannerMarks.get(classification);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append("'").append(classification).append("' is not a "
-                        + "valid classification component for this policy.");
-                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-            }
-        } finally {
-            readLock.unlock();
+        
+        if (policy.getClassificationPolicy().isComponentString()) {
+            
+        }
+        containsKey(classification)
+                }) {
+            m.classification = classificationPortionMarks.get(classification);
+        } else if (classificationBannerMarks.containsKey(classification)) {
+            m.classification = classificationBannerMarks.get(classification);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("'").append(classification).append("' is not a "
+                    + "valid classification component for this policy.");
+            throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
         }
         return this;
     }

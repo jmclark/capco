@@ -2,9 +2,8 @@ package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import org.geoint.capco.CapcoException;
 import org.geoint.capco.marking.ForeignSecurityMarking;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
@@ -15,14 +14,9 @@ import org.geoint.capco.marking.USSecurityMarking;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.impl.marking.USSecurityMarkingBuilderImpl;
 import org.geoint.capco.impl.marking.USSecurityMarkingParserImpl;
-import org.geoint.capco.marking.AccmComponent;
-import org.geoint.capco.marking.AeaComponent;
-import org.geoint.capco.marking.ClassificationComponent;
 import org.geoint.capco.marking.Country;
-import org.geoint.capco.marking.DisseminationComponent;
-import org.geoint.capco.marking.SapComponent;
-import org.geoint.capco.marking.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.spi.store.SecurityPolicyStore;
 
 /**
  * This policy implementation allows for structural knowledge of the CAPCO
@@ -35,13 +29,14 @@ import org.geoint.capco.marking.SecurityMarking;
 public class SecurityPolicyImpl implements SecurityPolicy {
 
     private final String name;
+    private final SecurityPolicyStore store;
 
-    //indicies
     private final Map<String, Country> countries = new HashMap<>(); //key is trigraph
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
 
-    public SecurityPolicyImpl(String name) {
+    public SecurityPolicyImpl(String name, SecurityPolicyStore store) {
         this.name = name;
+        this.store = store;
     }
 
     @Override
@@ -51,17 +46,17 @@ public class SecurityPolicyImpl implements SecurityPolicy {
 
     @Override
     public USSecurityMarkingBuilder builder() {
-        return new USSecurityMarkingBuilderImpl();
+        return new USSecurityMarkingBuilderImpl(this);
     }
 
     @Override
     public JointSecurityMarkingBuilder jointBuilder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Joint markings are not yet supported.");
     }
 
     @Override
     public ForeignSecurityMarkingBuilder foreignBuilder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Foreign markings are not yet supported.");
     }
 
     @Override
@@ -95,6 +90,73 @@ public class SecurityPolicyImpl implements SecurityPolicy {
             }
         }
         return valueOfUS(context, marking);
+    }
+
+    @Override
+    public boolean isPermitted(final SecurityMarking m1, final SecurityMarking m2)
+            throws CapcoException {
+        return localize(m1).isPermitted(localize(m2));
+    }
+
+    @Override
+    public SecurityMarking merge(SecurityMarking... markings)
+            throws CapcoException {
+
+        SecurityMarking result = null;
+        for (SecurityMarking m : markings) {
+            result = localize(m).merge(result);
+        }
+        return result;
+    }
+
+    public ComponentPolicy[] getClassificationPolicy() {
+        return store.getClassificationPolicy();
+    }
+
+    public ComponentPolicy[] getSCIPolicy() {
+        return store.getSCIPolicy();
+    }
+
+    public SAPComponentPolicy[] getSAPPolicy() {
+        return store.getSAPPolicy();
+    }
+
+    public ComponentPolicy[] getFGIPolicy() {
+        return store.getFGIPolicy();
+    }
+
+    public ComponentPolicy[] getAEAPolicy() {
+        return store.getAEAPolicy();
+    }
+
+    public ComponentPolicy[] getRelPolicy() {
+        return store.getRelPolicy();
+    }
+
+    public ComponentPolicy[] getDisplayPolicy() {
+        return store.getDisplayPolicy();
+    }
+
+    public ComponentPolicy[] getDisseminationPolicy() {
+        return store.getDisseminationPolicy();
+    }
+
+    public ComponentPolicy[] getACCMPolicy() {
+        return store.getACCMPolicy();
+    }
+
+    /**
+     * Converts the provided SecurityMarking to this policy, as needed.
+     *
+     * @param marking
+     * @return
+     * @throws CapcoException
+     */
+    private SecurityMarking localize(SecurityMarking marking)
+            throws CapcoException {
+        return (!marking.getPolicy().equals(this))
+                ? this.valueOf(marking.toString())
+                : marking;
     }
 
     /**
@@ -139,92 +201,5 @@ public class SecurityPolicyImpl implements SecurityPolicy {
             throws InvalidSecurityMarkingException {
         USSecurityMarkingParserImpl parser = new USSecurityMarkingParserImpl(this);
         return parser.parse(context, marking);
-    }
-
-    @Override
-    public boolean isPermitted(SecurityMarking m1, SecurityMarking m2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SecurityMarking merge(SecurityMarking... markings) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-//    @Override
-//    public String[] getAllClassifications() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllSCI() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllSAP() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllFGICountries() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllAEA() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllRelCountries() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllDisplayCountries() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllDissemControls() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public String[] getAllACCM() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-
-    private abstract class AbstractSecurityMarkingImpl implements SecurityMarking {
-
-        public static final String COMPONENT_SEPARATOR = "//";
-        ClassificationComponent classification;
-
-        @Override
-        public SecurityPolicy getPolicy() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ClassificationComponent getClassification() {
-            return classification;
-        }
-
-        @Override
-        public SecurityMarking merge(SecurityMarking marking) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public boolean isPermitted(SecurityMarking marking) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public byte[] asBytes() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
     }
 }

@@ -1,7 +1,6 @@
 package org.geoint.capco.impl.policy;
 
 import org.geoint.capco.CapcoException;
-import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 
@@ -16,15 +15,20 @@ public interface ComponentPolicy<C extends MarkingComponent> {
 
     void addRestriction(ComponentRestriction res);
 
-    /**
-     * Validates this components values of the provided SecurityMarking.
-     *
-     * Default implementation checks the marking against all restrictions.
-     *
-     * @param marking
-     * @throws InvalidSecurityMarkingException
-     */
-    void validate(SecurityMarking marking) throws InvalidSecurityMarkingException;
+    
+    //I removed validate because there shouldn't be a way for the client
+    //application to create an invalid SecurityMarking, since it must
+    //go through the controlled API.
+    
+//    /**
+//     * Validates this components values of the provided SecurityMarking.
+//     *
+//     * Default implementation checks the marking against all restrictions.
+//     *
+//     * @param marking
+//     * @throws InvalidSecurityMarkingException
+//     */
+//    void validate(SecurityMarking marking) throws InvalidSecurityMarkingException;
 
     /**
      * Determines if the provides string is a stringified representation of the

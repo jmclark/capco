@@ -5,6 +5,7 @@ import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.JointSecurityMarkingBuilder;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
 import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.marking.USSecurityMarking;
 
 /**
  * A security policy is configured to manage the available security marking
@@ -107,24 +108,28 @@ public interface SecurityPolicy {
      * @param m1 base marking
      * @param m2 comparison marking
      * @return
+     * @throws CapcoException if markings are not from the same policy and could
+     * not be converted
      */
-    boolean isPermitted(SecurityMarking m1, SecurityMarking m2);
+    boolean isPermitted(SecurityMarking m1, SecurityMarking m2) throws CapcoException;
 
     /**
      * Merges the provided markings into a single, encompassing, marking
      *
      * @param markings
      * @return
+     * @throws CapcoException if markings are not from the same policy and could
+     * not be converted
      */
-    SecurityMarking merge(SecurityMarking... markings);
-//
+    SecurityMarking merge(SecurityMarking... markings) throws CapcoException;
+
 //    /**
 //     * Return all the potential classification values based on the policy and
 //     * the requesting users permissions.
 //     *
 //     * @return
 //     */
-//    String[] getAllClassifications();
+//    ComponentPolicy[] getClassificationPolicy();
 //
 //    /**
 //     * Return all the potential SCI values based on the policy and the
@@ -132,7 +137,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllSCI();
+//    ComponentPolicy[] getSCIPolicy();
 //
 //    /**
 //     * Return all the potential SAP values based on the policy and the
@@ -140,7 +145,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllSAP();
+//    SAPComponentPolicy[] getSAPPolicy();
 //
 //    /**
 //     * Return all the potential FGI country codes based on the policy and the
@@ -148,7 +153,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllFGICountries();
+//    ComponentPolicy[] getFGIPolicy();
 //
 //    /**
 //     * Return all the AEA settings based on the policy and the requesting users
@@ -156,7 +161,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllAEA();
+//    ComponentPolicy[] getAEAPolicy();
 //
 //    /**
 //     * Return all the potential REL country codes based on the policy and the
@@ -164,7 +169,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllRelCountries();
+//    ComponentPolicy[] getRelPolicy();
 //
 //    /**
 //     * Return all the potential DISPLAY TO country codes based on the policy and
@@ -172,7 +177,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllDisplayCountries();
+//    ComponentPolicy[] getDisplayPolicy();
 //
 //    /**
 //     * Return all the potential dissemination controls based on the policy and
@@ -180,7 +185,7 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllDissemControls();
+//    ComponentPolicy[] getDisseminationPolicy();
 //
 //    /**
 //     * Return all the potential ACCM control words based on the policy and the
@@ -188,5 +193,5 @@ public interface SecurityPolicy {
 //     *
 //     * @return
 //     */
-//    String[] getAllACCM();
+//    ComponentPolicy[] getACCMPolicy();
 }

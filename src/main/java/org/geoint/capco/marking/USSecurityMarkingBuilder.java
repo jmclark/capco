@@ -1,4 +1,3 @@
-
 package org.geoint.capco.marking;
 
 /**
@@ -11,18 +10,17 @@ public interface USSecurityMarkingBuilder {
      *
      * @param classificiation
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder setClassification(String classificiation)
             throws InvalidSecurityMarkingException;
-
 
     /**
      * Adds a Sensitive Compartmented Information (SCI) control system.
      *
      * @param sci
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addSCI(String... sci)
             throws InvalidSecurityMarkingException;
@@ -33,7 +31,7 @@ public interface USSecurityMarkingBuilder {
      * @param sapNames either a SAP code word, program name, or assigned
      * digraph/trigraph
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addSAP(String... sapNames)
             throws InvalidSecurityMarkingException;
@@ -43,7 +41,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @param aea
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder setAEA(String aea)
             throws InvalidSecurityMarkingException;
@@ -54,7 +52,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @param countryCode
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addFGICountry(String... countryCode)
             throws InvalidSecurityMarkingException;
@@ -64,7 +62,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @param countryCode
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addRelCountry(String... countryCode)
             throws InvalidSecurityMarkingException;
@@ -74,7 +72,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @param countryCode
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addDisplayCountry(String... countryCode)
             throws InvalidSecurityMarkingException;
@@ -82,9 +80,9 @@ public interface USSecurityMarkingBuilder {
     /**
      * Adds a generic dissemination control.
      *
-     * @param countryCode
+     * @param controls
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addDissemControl(String... controls)
             throws InvalidSecurityMarkingException;
@@ -94,7 +92,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @param accm
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     USSecurityMarkingBuilder addACCM(String... accm)
             throws InvalidSecurityMarkingException;
@@ -112,13 +110,12 @@ public interface USSecurityMarkingBuilder {
      * HVSACO material is conveyed in program classification guides.
      *
      * @param b
-     * @return 
+     * @return
      * @throws InvalidSecurityMarkingException
      */
     public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b)
             throws InvalidSecurityMarkingException;
-    
-    
+
     /**
      * Returns the available classifications based on the policy, the requesting
      * users permissions, and builders current state.
@@ -126,7 +123,7 @@ public interface USSecurityMarkingBuilder {
      * @return
      */
     String[] getAvailableClassifications();
-    
+
     /**
      * Returns all the available SCI controls based on the policy, the
      * requesting users permissions, and builders current state.
@@ -190,7 +187,8 @@ public interface USSecurityMarkingBuilder {
      * @return
      */
     String[] getAvailableACCM();
-/**
+
+    /**
      * Retrieve the SecurityMarking instance.
      *
      * @return

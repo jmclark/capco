@@ -1,16 +1,85 @@
 package org.geoint.capco.spi.store;
 
-import java.io.IOException;
-import org.geoint.capco.SecurityPolicy;
+import org.geoint.capco.impl.policy.ComponentPolicy;
+import org.geoint.capco.impl.policy.SAPComponentPolicy;
 
 /**
- * SPI interface for retrieving and persisting SecurityPolicies.
- * 
- * Store instances must be registered with the ServiceLoader
+ * SPI interface for retrieving and persisting SecurityPolicy settings.
+ *
  */
 public interface SecurityPolicyStore {
 
-    SecurityPolicy[] retrievePolicies();
+    String getPolicyName();
 
-    void save(SecurityPolicy policy) throws IOException;
+    /**
+     * Return all the potential classification values based on the policy and
+     * the requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getClassificationPolicy();
+
+    /**
+     * Return all the potential SCI values based on the policy and the
+     * requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getSCIPolicy();
+
+    /**
+     * Return all the potential SAP values based on the policy and the
+     * requesting users permissions.
+     *
+     * @return
+     */
+    SAPComponentPolicy[] getSAPPolicy();
+
+    /**
+     * Return all the potential FGI country codes based on the policy and the
+     * requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getFGIPolicy();
+
+    /**
+     * Return all the AEA settings based on the policy and the requesting users
+     * permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getAEAPolicy();
+
+    /**
+     * Return all the potential REL country codes based on the policy and the
+     * requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getRelPolicy();
+
+    /**
+     * Return all the potential DISPLAY TO country codes based on the policy and
+     * the requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getDisplayPolicy();
+
+    /**
+     * Return all the potential dissemination controls based on the policy and
+     * the requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getDisseminationPolicy();
+
+    /**
+     * Return all the potential ACCM control words based on the policy and the
+     * requesting users permissions.
+     *
+     * @return
+     */
+    ComponentPolicy[] getACCMPolicy();
 }
