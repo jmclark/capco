@@ -1,21 +1,25 @@
 package org.geoint.capco.impl.marking;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.geoint.capco.SecurityPolicy;
-import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.marking.USSecurityMarking;
-import org.geoint.capco.marking.USSecurityMarkingBuilder;
+import org.geoint.capco.impl.policy.ComponentRestriction;
+import org.geoint.capco.impl.policy.ComponentRestrictionException;
 import org.geoint.capco.impl.policy.SecurityPolicyImpl;
 import org.geoint.capco.marking.AccmComponent;
 import org.geoint.capco.marking.AeaComponent;
 import org.geoint.capco.marking.ClassificationComponent;
 import org.geoint.capco.marking.Country;
 import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.InvalidSecurityMarkingException;
+import org.geoint.capco.marking.MarkingComponent;
 import org.geoint.capco.marking.SapComponent;
 import org.geoint.capco.marking.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
+import org.geoint.capco.marking.USSecurityMarking;
 import static org.geoint.capco.marking.USSecurityMarking.HVSACO_IDENTIFIER;
+import org.geoint.capco.marking.USSecurityMarkingBuilder;
 
 /**
  * Create an instance of a USSecurityMarking.
@@ -26,60 +30,47 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
     private final SecurityPolicyImpl policy;
     private final USSecurityMarkingImpl m;
-    private final SecurityMarking context;
 
     public USSecurityMarkingBuilderImpl(SecurityPolicyImpl policy) {
-        this(policy, null);
-    }
-
-    public USSecurityMarkingBuilderImpl(SecurityPolicyImpl policy, SecurityMarking context) {
         this.policy = policy;
         this.m = new USSecurityMarkingImpl(policy);
-        this.context = context;
     }
 
     @Override
     public USSecurityMarkingBuilder setClassification(final String classification)
             throws InvalidSecurityMarkingException {
-        
-        if (policy.getClassificationPolicy().isComponentString()) {
-            
-        }
-        containsKey(classification)
-                }) {
-            m.classification = classificationPortionMarks.get(classification);
-        } else if (classificationBannerMarks.containsKey(classification)) {
-            m.classification = classificationBannerMarks.get(classification);
-        } else {
+
+        if (!policy.getClassificationPolicy().isComponentString(classification)) {
             StringBuilder sb = new StringBuilder();
             sb.append("'").append(classification).append("' is not a "
                     + "valid classification component for this policy.");
             throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
         }
+
+        m.classification = policy.getClassificationPolicy().getComponent(classification);
+
         return this;
     }
 
     @Override
     public USSecurityMarkingBuilder addSCI(String... sci)
             throws InvalidSecurityMarkingException {
-        SecurityPolicyImpl.USSecurityMarkingImpl usm = getUSMarking();
-        readLock.lock();
-        try {
-            for (String control : sci) {
-                if (sciBannerMarks.containsKey(control)) {
-                    usm.sci.add(sciBannerMarks.get(control));
-                } else if (sciPortionMarks.containsKey(control)) {
-                    usm.sci.add(sciPortionMarks.get(control));
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Uknown SCI control '")
-                            .append(control)
-                            .append("' in security policy.");
-                    throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                }
+
+        for (String control : sci) {
+
+            SciComponent component = policy.getSCIPolicy().getComponent(control);
+
+            if (component == null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Uknown SCI control '")
+                        .append(control)
+                        .append("' in security policy.");
+                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
             }
-        } finally {
-            readLock.unlock();
+
+            policy.isPermitted(m, component);
+
+            m.sci.add(policy.getSCIPolicy().getComponent(control));
         }
         return this;
     }
@@ -90,50 +81,39 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
         //validate SAP component...we do this first (before checking if 
         //this should be "multiple" because we want to validate regardless
 
-        SecurityPolicyImpl.USSecurityMarkingImpl usm = getUSMarking();
-        readLock.lock();
-        try {
-            boolean isMultiple = false;
-            if (usm.sap.size() == 1 && usm.sap.iterator().next().isMultiple()) {
+        boolean isMultiple = false;
+        if (m.sap.size() == 1 && m.sap.iterator().next().isMultiple()) {
+            isMultiple = true;
+        }
+
+        for (String sn : sapNames) {
+            if (!policy.getSAPPolicy().isComponentString(sn)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("'")
+                        .append(sn)
+                        .append("' is not "
+                                + "a valid SAP program name, code word, or "
+                                + "digraph/trigraph for this policy.");
+                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
+            }
+
+            SapComponent sap = policy.getSAPPolicy().getComponent(sn);
+            policy.isPermitted(m, sap);
+
+            if (isMultiple) {
+                //disregard
+                continue;
+            }
+
+            m.sap.add(sap);
+
+            //check if we're 4 or over now...we're using a Set, so it'll
+            //only store a SapComponent once
+            if (m.sap.size() >= 4) {
                 isMultiple = true;
+                m.sap.clear();
+                m.sap.add(SapComponent.MULTIPLE);
             }
-
-            for (String sn : sapNames) {
-                SapComponent sap = null;
-
-                if (sapProgramDigraphMarks.containsKey(sn)) {
-                    sap = (sapProgramDigraphMarks.get(sn));
-                } else if (sapCodeWords.containsKey(sn)) {
-                    sap = (sapCodeWords.get(sn));
-                } else if (sapProgramNames.containsKey(sn)) {
-                    sap = (sapProgramNames.get(sn));
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("'")
-                            .append(sn)
-                            .append("' is not "
-                                    + "a valid SAP program name, code word, or "
-                                    + "digraph/trigraph for this policy.");
-                    throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                }
-
-                if (isMultiple) {
-                    //disregard
-                    continue;
-                }
-
-                usm.sap.add(sap);
-
-                //check if we're 4 or over now...we're using a Set, so it'll
-                //only store a SapComponent once
-                if (usm.sap.size() >= 4) {
-                    isMultiple = true;
-                    usm.sap.clear();
-                    usm.sap.add(SapComponent.MULTIPLE);
-                }
-            }
-        } finally {
-            readLock.unlock();
         }
         return this;
     }

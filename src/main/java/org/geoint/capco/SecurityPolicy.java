@@ -1,9 +1,11 @@
 package org.geoint.capco;
 
+import org.geoint.capco.impl.policy.ComponentRestrictionException;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.JointSecurityMarkingBuilder;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
+import org.geoint.capco.marking.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.marking.USSecurityMarking;
 
@@ -61,8 +63,8 @@ public interface SecurityPolicy {
      *
      * @param marking stringified version of a SecurityMarking
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException if String is not
-     * a valid security marking for this policy
+     * @throws InvalidSecurityMarkingException if String is not a valid security
+     * marking for this policy
      */
     SecurityMarking valueOf(String marking) throws InvalidSecurityMarkingException;
 
@@ -108,10 +110,24 @@ public interface SecurityPolicy {
      * @param m1 base marking
      * @param m2 comparison marking
      * @return
-     * @throws CapcoException if markings are not from the same policy and could
+     * @throws InvalidSecurityMarkingException if markings are not from the same policy and could
      * not be converted
      */
-    boolean isPermitted(SecurityMarking m1, SecurityMarking m2) throws CapcoException;
+    boolean isPermitted(SecurityMarking m1, SecurityMarking m2) 
+            throws InvalidSecurityMarkingException;
+
+    /**
+     * Determines if the component can be added to the marking within the scope
+     * of this policy.
+     *
+     * @param marking
+     * @param component
+     * @return
+     * @throws ComponentRestrictionException
+     * @throws InvalidSecurityMarkingException
+     */
+    boolean isPermitted(SecurityMarking marking, MarkingComponent component)
+            throws ComponentRestrictionException, InvalidSecurityMarkingException;
 
     /**
      * Merges the provided markings into a single, encompassing, marking
@@ -123,75 +139,4 @@ public interface SecurityPolicy {
      */
     SecurityMarking merge(SecurityMarking... markings) throws CapcoException;
 
-//    /**
-//     * Return all the potential classification values based on the policy and
-//     * the requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getClassificationPolicy();
-//
-//    /**
-//     * Return all the potential SCI values based on the policy and the
-//     * requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getSCIPolicy();
-//
-//    /**
-//     * Return all the potential SAP values based on the policy and the
-//     * requesting users permissions.
-//     *
-//     * @return
-//     */
-//    SAPComponentPolicy[] getSAPPolicy();
-//
-//    /**
-//     * Return all the potential FGI country codes based on the policy and the
-//     * requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getFGIPolicy();
-//
-//    /**
-//     * Return all the AEA settings based on the policy and the requesting users
-//     * permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getAEAPolicy();
-//
-//    /**
-//     * Return all the potential REL country codes based on the policy and the
-//     * requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getRelPolicy();
-//
-//    /**
-//     * Return all the potential DISPLAY TO country codes based on the policy and
-//     * the requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getDisplayPolicy();
-//
-//    /**
-//     * Return all the potential dissemination controls based on the policy and
-//     * the requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getDisseminationPolicy();
-//
-//    /**
-//     * Return all the potential ACCM control words based on the policy and the
-//     * requesting users permissions.
-//     *
-//     * @return
-//     */
-//    ComponentPolicy[] getACCMPolicy();
 }

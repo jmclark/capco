@@ -14,7 +14,16 @@ import org.geoint.capco.marking.USSecurityMarking;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.impl.marking.USSecurityMarkingBuilderImpl;
 import org.geoint.capco.impl.marking.USSecurityMarkingParserImpl;
+import org.geoint.capco.marking.AccmComponent;
+import org.geoint.capco.marking.AeaComponent;
+import org.geoint.capco.marking.ClassificationComponent;
 import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.DisplayToComponent;
+import org.geoint.capco.marking.DisseminationComponent;
+import org.geoint.capco.marking.FgiComponent;
+import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.RelToComponent;
+import org.geoint.capco.marking.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.spi.store.SecurityPolicyStore;
 
@@ -31,7 +40,6 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     private final String name;
     private final SecurityPolicyStore store;
 
-    private final Map<String, Country> countries = new HashMap<>(); //key is trigraph
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
 
     public SecurityPolicyImpl(String name, SecurityPolicyStore store) {
@@ -94,8 +102,67 @@ public class SecurityPolicyImpl implements SecurityPolicy {
 
     @Override
     public boolean isPermitted(final SecurityMarking m1, final SecurityMarking m2)
-            throws CapcoException {
+            throws InvalidSecurityMarkingException {
         return localize(m1).isPermitted(localize(m2));
+    }
+
+    @Override
+    public boolean isPermitted(SecurityMarking marking, MarkingComponent component)
+            throws ComponentRestrictionException, InvalidSecurityMarkingException {
+        //TODO this is done synchornously, but may be worth trying a concurrent 
+        //approach when the number of restrictions get high (fork/join...
+        //perhaps with some kind of interrupt?)
+        synchronousRestrictionCheck(marking, component);
+        return true;
+    }
+    
+    private void synchronousRestrictionCheck(SecurityMarking marking, 
+            MarkingComponent component) throws ComponentRestrictionException, 
+            InvalidSecurityMarkingException {
+        SecurityMarking lm = localize(marking);
+        for (ComponentRestriction r : 
+                this.store.getClassificationPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r: 
+                this.store.getSCIPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getSAPPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getAEAPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getFGIPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getDisseminationPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getRelPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getDisplayPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+        for (ComponentRestriction r :
+                this.store.getACCMPolicy().getRestrictions()) {
+            checkRestriction(lm, component, r);
+        }
+    }
+    
+    private void checkRestriction (SecurityMarking marking, 
+            MarkingComponent component, ComponentRestriction r) {
+        if (!r.isPermitted(marking, component)) {
+            
+        }
     }
 
     @Override
@@ -109,39 +176,39 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         return result;
     }
 
-    public ComponentPolicy[] getClassificationPolicy() {
+    public ComponentPolicy<ClassificationComponent> getClassificationPolicy() {
         return store.getClassificationPolicy();
     }
 
-    public ComponentPolicy[] getSCIPolicy() {
+    public ComponentPolicy<SciComponent> getSCIPolicy() {
         return store.getSCIPolicy();
     }
 
-    public SAPComponentPolicy[] getSAPPolicy() {
+    public SapComponentPolicy getSAPPolicy() {
         return store.getSAPPolicy();
     }
 
-    public ComponentPolicy[] getFGIPolicy() {
+    public ComponentPolicy<FgiComponent> getFGIPolicy() {
         return store.getFGIPolicy();
     }
 
-    public ComponentPolicy[] getAEAPolicy() {
+    public ComponentPolicy<AeaComponent> getAEAPolicy() {
         return store.getAEAPolicy();
     }
 
-    public ComponentPolicy[] getRelPolicy() {
+    public ComponentPolicy<RelToComponent> getRelPolicy() {
         return store.getRelPolicy();
     }
 
-    public ComponentPolicy[] getDisplayPolicy() {
+    public ComponentPolicy<DisplayToComponent> getDisplayPolicy() {
         return store.getDisplayPolicy();
     }
 
-    public ComponentPolicy[] getDisseminationPolicy() {
+    public ComponentPolicy<DisseminationComponent> getDisseminationPolicy() {
         return store.getDisseminationPolicy();
     }
 
-    public ComponentPolicy[] getACCMPolicy() {
+    public ComponentPolicy<AccmComponent> getACCMPolicy() {
         return store.getACCMPolicy();
     }
 
@@ -153,7 +220,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
      * @throws CapcoException
      */
     private SecurityMarking localize(SecurityMarking marking)
-            throws CapcoException {
+            throws InvalidSecurityMarkingException {
         return (!marking.getPolicy().equals(this))
                 ? this.valueOf(marking.toString())
                 : marking;
@@ -202,4 +269,5 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         USSecurityMarkingParserImpl parser = new USSecurityMarkingParserImpl(this);
         return parser.parse(context, marking);
     }
+
 }

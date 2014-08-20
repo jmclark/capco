@@ -11,8 +11,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.CapcoException;
 import org.geoint.capco.DuplicateComponentException;
 import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.SecurityMarking;
 
 /**
+ *
+ * A security policy is internally thread-safe. If it's needed to lock the
+ * entire SecurityPolicy, this must be done manually.
  *
  * @param <C>
  */
@@ -28,8 +32,7 @@ public abstract class AbstractComponentPolicy<C extends MarkingComponent>
     protected final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock(false);
     protected final Lock readLock = rwl.readLock();
     protected final Lock writeLock = rwl.writeLock();
-    
-    
+
     @Override
     public void addComponent(C component) throws CapcoException {
         writeLock.lock();
@@ -62,16 +65,64 @@ public abstract class AbstractComponentPolicy<C extends MarkingComponent>
             writeLock.unlock();
         }
     }
+    
+    @Override
+    public ComponentRestriction[] getRestrictions() {
+        readLock.lock();
+        try {
+            return (ComponentRestriction[]) restrictions.toArray();
+        } finally {
+            readLock.unlock();
+        }
+    }
 
     @Override
     public boolean isComponentString(String component) {
         readLock.lock();
         try {
-            return portionIndex.containsKey(component) 
+            return portionIndex.containsKey(component)
                     || bannerIndex.containsKey(component);
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
-    
+
+    @Override
+    public C getComponent(String component) {
+        readLock.lock();
+        try {
+            if (portionIndex.containsKey(component)) {
+                return portionIndex.get(component);
+            } else if (bannerIndex.containsKey(component)) {
+                return bannerIndex.get(component);
+            }
+            return null;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public C[] getAvailable(SecurityMarking marking) {
+        return filterRestrictedComponents(marking);
+    }
+
+    protected C[] filterRestrictedComponents(SecurityMarking marking) {
+        readLock.lock();
+        try {
+            List<C> available = new ArrayList<>();
+            componentLoop:
+            for (C c : components) {
+                for (ComponentRestriction r : restrictions) {
+                    if (!r.isPermitted(marking, c)) {
+                        continue componentLoop;
+                    }
+                }
+                available.add(c);
+            }
+            return (C[]) available.toArray(new MarkingComponent[available.size()]);
+        } finally {
+            readLock.unlock();
+        }
+    }
 }

@@ -15,11 +15,16 @@ public interface ComponentPolicy<C extends MarkingComponent> {
 
     void addRestriction(ComponentRestriction res);
 
-    
+    /**
+     * Returns the restrictions applied to the policies.
+     *
+     * @return
+     */
+    ComponentRestriction[] getRestrictions();
+
     //I removed validate because there shouldn't be a way for the client
     //application to create an invalid SecurityMarking, since it must
     //go through the controlled API.
-    
 //    /**
 //     * Validates this components values of the provided SecurityMarking.
 //     *
@@ -29,7 +34,6 @@ public interface ComponentPolicy<C extends MarkingComponent> {
 //     * @throws InvalidSecurityMarkingException
 //     */
 //    void validate(SecurityMarking marking) throws InvalidSecurityMarkingException;
-
     /**
      * Determines if the provides string is a stringified representation of the
      * component.
@@ -38,6 +42,15 @@ public interface ComponentPolicy<C extends MarkingComponent> {
      * @return
      */
     boolean isComponentString(String component);
+
+    /**
+     * Returns the component for the provided stingified representation.
+     *
+     * @param component
+     * @return returns the component or null if no component is found in the
+     * policy for the String
+     */
+    C getComponent(String component);
 
     /**
      * Returns the controls that are available, given the provided security

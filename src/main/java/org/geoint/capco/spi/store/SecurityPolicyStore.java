@@ -1,7 +1,7 @@
 package org.geoint.capco.spi.store;
 
 import org.geoint.capco.impl.policy.ComponentPolicy;
-import org.geoint.capco.impl.policy.SAPComponentPolicy;
+import org.geoint.capco.impl.policy.SapComponentPolicy;
 
 /**
  * SPI interface for retrieving and persisting SecurityPolicy settings.
@@ -17,7 +17,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getClassificationPolicy();
+    ComponentPolicy getClassificationPolicy();
 
     /**
      * Return all the potential SCI values based on the policy and the
@@ -25,7 +25,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getSCIPolicy();
+    ComponentPolicy getSCIPolicy();
 
     /**
      * Return all the potential SAP values based on the policy and the
@@ -33,7 +33,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    SAPComponentPolicy[] getSAPPolicy();
+    SapComponentPolicy getSAPPolicy();
 
     /**
      * Return all the potential FGI country codes based on the policy and the
@@ -41,7 +41,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getFGIPolicy();
+    ComponentPolicy getFGIPolicy();
 
     /**
      * Return all the AEA settings based on the policy and the requesting users
@@ -49,7 +49,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getAEAPolicy();
+    ComponentPolicy getAEAPolicy();
 
     /**
      * Return all the potential REL country codes based on the policy and the
@@ -57,7 +57,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getRelPolicy();
+    ComponentPolicy getRelPolicy();
 
     /**
      * Return all the potential DISPLAY TO country codes based on the policy and
@@ -65,7 +65,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getDisplayPolicy();
+    ComponentPolicy getDisplayPolicy();
 
     /**
      * Return all the potential dissemination controls based on the policy and
@@ -73,7 +73,7 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getDisseminationPolicy();
+    ComponentPolicy getDisseminationPolicy();
 
     /**
      * Return all the potential ACCM control words based on the policy and the
@@ -81,5 +81,5 @@ public interface SecurityPolicyStore {
      *
      * @return
      */
-    ComponentPolicy[] getACCMPolicy();
+    ComponentPolicy getACCMPolicy();
 }
