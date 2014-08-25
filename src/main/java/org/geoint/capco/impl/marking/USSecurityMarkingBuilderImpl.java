@@ -1,11 +1,8 @@
 package org.geoint.capco.impl.marking;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.geoint.capco.SecurityPolicy;
-import org.geoint.capco.impl.policy.ComponentRestriction;
-import org.geoint.capco.impl.policy.ComponentRestrictionException;
 import org.geoint.capco.impl.policy.SecurityPolicyImpl;
 import org.geoint.capco.marking.AccmComponent;
 import org.geoint.capco.marking.AeaComponent;
@@ -13,7 +10,6 @@ import org.geoint.capco.marking.ClassificationComponent;
 import org.geoint.capco.marking.Country;
 import org.geoint.capco.marking.DisseminationComponent;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.marking.MarkingComponent;
 import org.geoint.capco.marking.SapComponent;
 import org.geoint.capco.marking.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
@@ -68,9 +64,10 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
                 throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
             }
 
-            policy.isPermitted(m, component);
-
-            m.sci.add(policy.getSCIPolicy().getComponent(control));
+            if (!m.sci.contains(component)) {
+                policy.isPermitted(m, component);
+                m.sci.add(component);
+            }
         }
         return this;
     }
@@ -87,7 +84,9 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
         }
 
         for (String sn : sapNames) {
-            if (!policy.getSAPPolicy().isComponentString(sn)) {
+            SapComponent sap = policy.getSAPPolicy().getComponent(sn);
+
+            if (sap == null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("'")
                         .append(sn)
@@ -97,15 +96,16 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
                 throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
             }
 
-            SapComponent sap = policy.getSAPPolicy().getComponent(sn);
-            policy.isPermitted(m, sap);
+            if (m.sap.contains(sap)) {
+                policy.isPermitted(m, sap);
 
-            if (isMultiple) {
-                //disregard
-                continue;
+                if (isMultiple) {
+                    //disregard
+                    continue;
+                }
+
+                m.sap.add(sap);
             }
-
-            m.sap.add(sap);
 
             //check if we're 4 or over now...we're using a Set, so it'll
             //only store a SapComponent once
@@ -119,59 +119,78 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
     }
 
     @Override
-    public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b) throws InvalidSecurityMarkingException {
-        addDissemControl(HVSACO_IDENTIFIER);
-        return this;
-    }
-
-    @Override
-    public USSecurityMarkingBuilder setAEA(String aea) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public USSecurityMarkingBuilder addFGICountry(String... countryCode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public USSecurityMarkingBuilder addRelCountry(String... countryCode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public USSecurityMarkingBuilder addDisplayCountry(String... countryCode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public USSecurityMarkingBuilder addDissemControl(String... controls)
             throws InvalidSecurityMarkingException {
-        SecurityPolicyImpl.USSecurityMarkingImpl usm = getUSMarking();
-        readLock.lock();
-        try {
-            for (String control : controls) {
-                if (disPortionMarks.containsKey(control)) {
-                    usm.diss.add(disPortionMarks.get(control));
-                } else if (disBannerMarks.containsKey(control)) {
-                    usm.diss.add(disBannerMarks.get(control));
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Unknown dissemination control '")
-                            .append(control)
-                            .append("' in security policy.");
-                    throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
-                }
+        for (String control : controls) {
+            DisseminationComponent diss = policy.getDisseminationPolicy().getComponent(control);
+
+            if (diss == null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Unknown dissemination control '")
+                        .append(control)
+                        .append("' in security policy.");
+                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
             }
-        } finally {
-            readLock.unlock();
+            
+            if (!m.diss.contains(diss)) {
+                policy.isPermitted(m, diss);
+                m.diss.add(diss);
+            }
         }
         return this;
     }
 
     @Override
-    public USSecurityMarkingBuilder addACCM(String... accm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public USSecurityMarkingBuilder setSpecialAccessChannelsOnly(boolean b)
+            throws InvalidSecurityMarkingException {
+        addDissemControl(HVSACO_IDENTIFIER);
+        return this;
+    }
+
+    @Override
+    public USSecurityMarkingBuilder setAEA(String aea)
+            throws InvalidSecurityMarkingException {
+        //TODO add AEA support
+        throw new UnsupportedOperationException("Currently not supported.");
+    }
+
+    @Override
+    public USSecurityMarkingBuilder addACCM(String... accm)
+            throws InvalidSecurityMarkingException {
+        for (String control : accm) {
+            AccmComponent ac = policy.getACCMPolicy().getComponent(control);
+            if (ac == null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Unknown ACCM control '")
+                        .append(control)
+                        .append("' in security policy.");
+                throw new InvalidSecurityMarkingException(m.toString(), sb.toString());
+            }
+
+            if (!m.accm.contains(ac)) {
+                policy.isPermitted(m, ac);
+                m.accm.add(ac);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public USSecurityMarkingBuilder addFGICountry(String... countryCode)
+            throws InvalidSecurityMarkingException {
+
+    }
+
+    @Override
+    public USSecurityMarkingBuilder addRelCountry(String... countryCode)
+            throws InvalidSecurityMarkingException {
+
+    }
+
+    @Override
+    public USSecurityMarkingBuilder addDisplayCountry(String... countryCode)
+            throws InvalidSecurityMarkingException {
+
     }
 
     @Override
@@ -196,7 +215,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
     @Override
     public String[] getAvailableAEA() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new String[0];
     }
 
     @Override
@@ -231,6 +250,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
         private Set<SapComponent> sap = new HashSet<>(); //SecurityMarkingBuilderImpl relies on this being a Set, if this is changed, update this
         private Set<SciComponent> sci = new HashSet<>();
         private Set<DisseminationComponent> diss = new HashSet<>();
+        private Set<AccmComponent> accm = new HashSet<>();
         private final SecurityPolicy policy;
 
         public USSecurityMarkingImpl(SecurityPolicy policy) {

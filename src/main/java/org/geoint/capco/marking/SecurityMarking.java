@@ -1,6 +1,5 @@
 package org.geoint.capco.marking;
 
-import org.geoint.capco.CapcoException;
 import org.geoint.capco.SecurityPolicy;
 
 /**

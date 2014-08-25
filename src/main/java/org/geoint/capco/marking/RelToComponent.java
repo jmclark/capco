@@ -3,10 +3,10 @@ package org.geoint.capco.marking;
 /**
  *
  */
-public class RelToComponent extends MarkingComponent {
+public class RelToComponent extends CountryComponent {
 
-    public RelToComponent(String portion, String banner) {
-        super(portion, banner);
+    public RelToComponent(Country country) {
+        super(country);
     }
 
 }

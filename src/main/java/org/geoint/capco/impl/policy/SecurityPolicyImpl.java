@@ -1,8 +1,6 @@
 package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import org.geoint.capco.CapcoException;
 import org.geoint.capco.marking.ForeignSecurityMarking;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
@@ -17,7 +15,6 @@ import org.geoint.capco.impl.marking.USSecurityMarkingParserImpl;
 import org.geoint.capco.marking.AccmComponent;
 import org.geoint.capco.marking.AeaComponent;
 import org.geoint.capco.marking.ClassificationComponent;
-import org.geoint.capco.marking.Country;
 import org.geoint.capco.marking.DisplayToComponent;
 import org.geoint.capco.marking.DisseminationComponent;
 import org.geoint.capco.marking.FgiComponent;
@@ -115,53 +112,62 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         synchronousRestrictionCheck(marking, component);
         return true;
     }
-    
-    private void synchronousRestrictionCheck(SecurityMarking marking, 
-            MarkingComponent component) throws ComponentRestrictionException, 
+
+    private void synchronousRestrictionCheck(SecurityMarking marking,
+            MarkingComponent component) throws ComponentRestrictionException,
             InvalidSecurityMarkingException {
         SecurityMarking lm = localize(marking);
-        for (ComponentRestriction r : 
-                this.store.getClassificationPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getClassificationPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r: 
-                this.store.getSCIPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getSCIPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getSAPPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getSAPPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getAEAPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getAEAPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getFGIPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getFGIPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getDisseminationPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getDisseminationPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getRelPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getRelPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getDisplayPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getDisplayPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
-        for (ComponentRestriction r :
-                this.store.getACCMPolicy().getRestrictions()) {
+        for (ComponentRestriction r
+                : this.store.getACCMPolicy().getRestrictions()) {
             checkRestriction(lm, component, r);
         }
     }
-    
-    private void checkRestriction (SecurityMarking marking, 
-            MarkingComponent component, ComponentRestriction r) {
+
+    private void checkRestriction(SecurityMarking marking,
+            MarkingComponent component, ComponentRestriction r)
+            throws ComponentRestrictionException {
         if (!r.isPermitted(marking, component)) {
-            
+            StringBuilder sb = new StringBuilder();
+            sb.append(component.getClass().getSimpleName())
+                    .append(" component '")
+                    .append(component.toString())
+                    .append("' cannot be added to marking '")
+                    .append(marking.asBanner())
+                    .append("'.");
+            throw new ComponentRestrictionException(
+                    component, r, marking.asBanner(), sb.toString());
         }
     }
 

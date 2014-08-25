@@ -1,12 +1,12 @@
-
 package org.geoint.capco.marking;
 
 /**
  *
  */
-public class FgiComponent extends MarkingComponent {
+public class FgiComponent extends CountryComponent {
 
-    public FgiComponent(String portion, String banner) {
-        super(portion, banner);
+    public FgiComponent(Country country) {
+        super(country);
     }
+
 }
