@@ -1,7 +1,7 @@
 package org.geoint.capco.spi;
 
+import org.geoint.capco.impl.policy.SecurityPolicyImpl;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.marking.SecurityMarking;
 
 /**
@@ -11,9 +11,9 @@ import org.geoint.capco.marking.SecurityMarking;
  */
 public abstract class SecurityMarkingParser<M extends SecurityMarking> {
 
-    private final SecurityPolicy policy;
+    private final SecurityPolicyImpl policy;
 
-    public SecurityMarkingParser(SecurityPolicy policy) {
+    public SecurityMarkingParser(SecurityPolicyImpl policy) {
         this.policy = policy;
     }
 
@@ -24,7 +24,7 @@ public abstract class SecurityMarkingParser<M extends SecurityMarking> {
      * @param context
      * @param marking
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     public abstract M parse(SecurityMarking context, String marking)
             throws InvalidSecurityMarkingException;
@@ -34,7 +34,7 @@ public abstract class SecurityMarkingParser<M extends SecurityMarking> {
      *
      * @param marking
      * @return
-     * @throws org.geoint.capco.InvalidSecurityMarkingException
+     * @throws InvalidSecurityMarkingException
      */
     public abstract M parse(String marking)
             throws InvalidSecurityMarkingException;
@@ -44,7 +44,7 @@ public abstract class SecurityMarkingParser<M extends SecurityMarking> {
      *
      * @return
      */
-    protected SecurityPolicy policy() {
+    protected SecurityPolicyImpl policy() {
         return policy;
     }
 }

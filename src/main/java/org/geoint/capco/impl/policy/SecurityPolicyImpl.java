@@ -2,12 +2,12 @@ package org.geoint.capco.impl.policy;
 
 import java.nio.charset.Charset;
 import org.geoint.capco.CapcoException;
+import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.marking.ForeignSecurityMarking;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.JointSecurityMarking;
 import org.geoint.capco.marking.JointSecurityMarkingBuilder;
-import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.marking.USSecurityMarking;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.impl.marking.USSecurityMarkingBuilderImpl;
@@ -114,60 +114,24 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     }
 
     private void synchronousRestrictionCheck(SecurityMarking marking,
-            MarkingComponent component) throws ComponentRestrictionException,
-            InvalidSecurityMarkingException {
+            MarkingComponent component)
+            throws ComponentRestrictionException, InvalidSecurityMarkingException {
         SecurityMarking lm = localize(marking);
-        for (ComponentRestriction r
-                : this.store.getClassificationPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getSCIPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getSAPPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getAEAPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getFGIPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getDisseminationPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getRelPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getDisplayPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-        for (ComponentRestriction r
-                : this.store.getACCMPolicy().getRestrictions()) {
-            checkRestriction(lm, component, r);
-        }
-    }
-
-    private void checkRestriction(SecurityMarking marking,
-            MarkingComponent component, ComponentRestriction r)
-            throws ComponentRestrictionException {
-        if (!r.isPermitted(marking, component)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(component.getClass().getSimpleName())
-                    .append(" component '")
-                    .append(component.toString())
-                    .append("' cannot be added to marking '")
-                    .append(marking.asBanner())
-                    .append("'.");
-            throw new ComponentRestrictionException(
-                    component, r, marking.asBanner(), sb.toString());
+        for (ComponentRestriction r : store.getRestrictions()) {
+            if (!r.isPermitted(lm, component)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("'")
+                        .append(marking.toString())
+                        .append("' cannot include ")
+                        .append(component.getClass().getSimpleName())
+                        .append(" component '")
+                        .append(component.toString())
+                        .append("' in policy '")
+                        .append(this.name)
+                        .append("'.");
+                throw new ComponentRestrictionException(
+                        component, r, marking.toString(), sb.toString());
+            }
         }
     }
 

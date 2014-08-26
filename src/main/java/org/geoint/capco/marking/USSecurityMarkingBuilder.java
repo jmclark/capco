@@ -122,7 +122,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableClassifications();
+    ClassificationComponent[] getAvailableClassifications();
 
     /**
      * Returns all the available SCI controls based on the policy, the
@@ -130,7 +130,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableSCI();
+    SciComponent[] getAvailableSCI();
 
     /**
      * Returns all the available SAP controls based on the policy, the
@@ -138,7 +138,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableSAP();
+    SapComponent[] getAvailableSAP();
 
     /**
      * Returns all the available FGI countries based on the policy, the
@@ -146,7 +146,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableFGICountries();
+    FgiComponent[] getAvailableFGICountries();
 
     /**
      * Returns all the available AEA settings based on the policy, the
@@ -154,7 +154,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableAEA();
+    AeaComponent[] getAvailableAEA();
 
     /**
      * Returns all the available releasable country codes based on the policy,
@@ -162,7 +162,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableRelCountries();
+    RelToComponent[] getAvailableRelCountries();
 
     /**
      * Returns all the available display country codes based on the policy, the
@@ -170,7 +170,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableDisplayCountries();
+    DisplayToComponent[] getAvailableDisplayCountries();
 
     /**
      * Returns all the available dissemination controls based on the policy, the
@@ -178,7 +178,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableDissemCountrols();
+    DisseminationComponent[] getAvailableDissemCountrols();
 
     /**
      * Returns all the available ACCM controls based on the policy, the
@@ -186,7 +186,7 @@ public interface USSecurityMarkingBuilder {
      *
      * @return
      */
-    String[] getAvailableACCM();
+    AccmComponent[] getAvailableACCM();
 
     /**
      * Retrieve the SecurityMarking instance.

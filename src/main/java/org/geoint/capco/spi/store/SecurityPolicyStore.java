@@ -1,6 +1,7 @@
 package org.geoint.capco.spi.store;
 
 import org.geoint.capco.impl.policy.ComponentPolicy;
+import org.geoint.capco.impl.policy.ComponentRestriction;
 import org.geoint.capco.impl.policy.SapComponentPolicy;
 
 /**
@@ -9,6 +10,11 @@ import org.geoint.capco.impl.policy.SapComponentPolicy;
  */
 public interface SecurityPolicyStore {
 
+    String[] getPolicyName
+    SecurityPolicyImpl[] getPolicies();
+    
+    SecurityPolicyImpl getPolicy(String policy);
+    
     String getPolicyName();
 
     /**
@@ -82,4 +88,11 @@ public interface SecurityPolicyStore {
      * @return
      */
     ComponentPolicy getACCMPolicy();
+    
+    /**
+     * Return the component restrictions for the policy.
+     * 
+     * @return 
+     */
+    ComponentRestriction[] getRestrictions();
 }

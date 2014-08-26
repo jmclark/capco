@@ -9,9 +9,13 @@ import org.geoint.capco.marking.SapComponent;
 /**
  *
  */
-public class SapComponentPolicy extends AbstractComponentPolicy<SapComponent> {
+public class SapComponentPolicy extends StandardComponentPolicy<SapComponent> {
 
     protected final Map<String, SapComponent> programNameIndex = new HashMap<>();
+
+    public SapComponentPolicy(SecurityMarkingComponentExtractor<SapComponent> extractor) {
+        super(extractor);
+    }
 
     @Override
     public void addComponent(SapComponent component) throws CapcoException {

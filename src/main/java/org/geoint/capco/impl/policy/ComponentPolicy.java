@@ -13,15 +13,14 @@ public interface ComponentPolicy<C extends MarkingComponent> {
 
     void addComponent(C component) throws CapcoException;
 
-    void addRestriction(ComponentRestriction res);
-
-    /**
-     * Returns the restrictions applied to the policies.
-     *
-     * @return
-     */
-    ComponentRestriction[] getRestrictions();
-
+//    void addRestriction(ComponentRestriction res);
+//
+//    /**
+//     * Returns the restrictions applied to the policies.
+//     *
+//     * @return
+//     */
+//    ComponentRestriction[] getRestrictions();
     //I removed validate because there shouldn't be a way for the client
     //application to create an invalid SecurityMarking, since it must
     //go through the controlled API.
@@ -51,6 +50,13 @@ public interface ComponentPolicy<C extends MarkingComponent> {
      * policy for the String
      */
     C getComponent(String component);
+
+    /**
+     * Returns all the components in this policy.
+     *
+     * @return
+     */
+    C[] getComponents();
 
     /**
      * Returns the controls that are available, given the provided security

@@ -3,8 +3,8 @@ package org.geoint.capco.impl.marking;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.geoint.capco.impl.policy.SecurityPolicyImpl;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.SecurityPolicy;
 import org.geoint.capco.marking.USSecurityMarking;
 import static org.geoint.capco.marking.USSecurityMarking.*;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
@@ -23,7 +23,7 @@ import org.geoint.capco.spi.SecurityMarkingParser;
  */
 public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurityMarking> {
 
-    public USSecurityMarkingParserImpl(SecurityPolicy policy) {
+    public USSecurityMarkingParserImpl(SecurityPolicyImpl policy) {
         super(policy);
     }
 
@@ -64,10 +64,8 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
             } else if (componentString.startsWith(FGI_IDENTIFIER)) {
                 String[] countries = componentString.substring(componentString.indexOf(FGI_IDENTIFIER) + FGI_IDENTIFIER.length()).split(" ");
                 mb.addFGICountry(countries);
-            } else if (!aeaBannerMarks.isEmpty()
-                    && (aeaBannerMarks.containsKey(componentString)
-                    || aeaPortionMarks.containsKey(componentString))) {
-
+            } else if (policy().getAEAPolicy().isComponentString(componentString)) {
+                mb.addACCM(componentString);
             } else {
                 //is SCI or Dissemination component
                 String[] controls = componentString.split(SUBCOMPONENT_SLASH_SEPARATOR);
@@ -77,8 +75,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
                     //this _could_ be SCI...give SCI first cracks =)
                     List<String> unknownSCI = new ArrayList<>(); //caputres if there were any erronous SCI controls
                     for (String control : controls) {
-                        if (sciBannerMarks.containsKey(control)
-                                || sciPortionMarks.containsKey(control)) {
+                        if (policy().getSCIPolicy().isComponentString(control)) {
                             validControls.add(control);
                         } else {
                             //either this is an invalid SCI...or this really is dissem controls
@@ -137,8 +134,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
                             } else if (control.startsWith(ACCM_IDENTIFIER)) {
                                 String[] accm = control.substring(control.indexOf(ACCM_IDENTIFIER) + ACCM_IDENTIFIER.length()).split(SUBCOMPONENT_SLASH_SEPARATOR);
                                 mb.addACCM(accm);
-                            } else if (disBannerMarks.containsKey(control)
-                                    || disPortionMarks.containsKey(control)) {
+                            } else if (policy().getDisseminationPolicy().isComponentString(control)) {
                                 validControls.add(control);
                             } else {
                                 unknownDiss.add(control);
