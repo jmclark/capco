@@ -1,25 +1,28 @@
-package org.geoint.capco.marking;
+
+package org.geoint.capco.marking.component;
 
 import java.util.Objects;
 
 /**
  *
  */
-public abstract class MarkingComponent {
+public class StandardComponent implements MarkingComponent {
 
     private final String portion;
     private final String banner;
-
-    public MarkingComponent(String portion, String banner) {
+    
+    public StandardComponent(String portion, String banner) {
         this.portion = portion.intern();
         this.banner = banner.intern();
     }
 
-    public String getPortion() {
+    @Override
+    public String asPortion() {
         return portion;
     }
 
-    public String getBanner() {
+    @Override
+    public String asBanner() {
         return banner;
     }
 
@@ -39,7 +42,7 @@ public abstract class MarkingComponent {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final MarkingComponent other = (MarkingComponent) obj;
+        final StandardComponent other = (StandardComponent) obj;
         if (!Objects.equals(this.portion, other.portion)) {
             return false;
         }
@@ -50,7 +53,12 @@ public abstract class MarkingComponent {
     }
 
     @Override
+    public int compareTo(MarkingComponent o) {
+        return this.portion.compareTo(o.asPortion());
+    }
+
+    @Override
     public String toString() {
-        return banner;
+        return portion;
     }
 }

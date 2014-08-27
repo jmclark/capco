@@ -1,5 +1,15 @@
 package org.geoint.capco.marking;
 
+import org.geoint.capco.marking.component.DisplayToComponent;
+import org.geoint.capco.marking.component.SciComponent;
+import org.geoint.capco.marking.component.FgiComponent;
+import org.geoint.capco.marking.component.RelToComponent;
+import org.geoint.capco.marking.component.AeaComponent;
+import org.geoint.capco.marking.component.ClassificationComponent;
+import org.geoint.capco.marking.component.SapComponent;
+import org.geoint.capco.marking.component.AccmComponent;
+import org.geoint.capco.marking.component.DisseminationComponent;
+
 /**
  *
  */

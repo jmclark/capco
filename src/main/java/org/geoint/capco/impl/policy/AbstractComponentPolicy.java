@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 
 /**

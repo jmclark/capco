@@ -1,5 +1,12 @@
 package org.geoint.capco.marking;
 
+import org.geoint.capco.marking.component.SciComponent;
+import org.geoint.capco.marking.component.AeaComponent;
+import org.geoint.capco.marking.component.CountryComponent;
+import org.geoint.capco.marking.component.SapComponent;
+import org.geoint.capco.marking.component.AccmComponent;
+import org.geoint.capco.marking.component.DisseminationComponent;
+
 /**
  * CAPCO SecurityMarking for US produced intelligence.
  */
@@ -55,21 +62,21 @@ public interface USSecurityMarking extends SecurityMarking {
      *
      * @return
      */
-    Country[] getFGICountries();
+    CountryComponent[] getFGICountries();
 
     /**
      * Return the releasable country dissemination controls
      *
      * @return
      */
-    Country[] getRelCountries();
+    CountryComponent[] getRelCountries();
 
     /**
      * Return the display countries controls
      *
      * @return
      */
-    Country[] getDisplayCountries();
+    CountryComponent[] getDisplayCountries();
 
     /**
      * Return the dissemination controls

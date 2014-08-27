@@ -28,7 +28,9 @@ public final class SecurityPolicyManager {
     private static final Map<String, SecurityPolicy> policies = new HashMap<>();
     private static final Map<String, Set<SecurityPolicyStore>> stores = new HashMap<>();
     private static final Logger logger = Logger.getLogger(SecurityPolicyManager.class.getName());
-
+    public static final String PROPERTY_STORE_DIR = "capco.store.dir";
+    public static final String PROPERTY_STORE_FILE = "capcp.store.file";
+    
     static {
         //load policies from ServiceLoader
         load(new ServiceLoaderPolicyStore());

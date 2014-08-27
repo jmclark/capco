@@ -1,4 +1,4 @@
-package org.geoint.capco.marking;
+package org.geoint.capco.marking.component;
 
 /**
  * A Special Access Program (SAP) control marking has three potential tokens

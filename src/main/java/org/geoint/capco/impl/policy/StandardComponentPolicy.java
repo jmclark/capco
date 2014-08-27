@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geoint.capco.CapcoException;
 import org.geoint.capco.DuplicateComponentException;
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 
 /**
  * Standard (generic) component policy features, used most often between the

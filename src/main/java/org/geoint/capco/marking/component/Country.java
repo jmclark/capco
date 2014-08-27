@@ -1,4 +1,4 @@
-package org.geoint.capco.marking;
+package org.geoint.capco.marking.component;
 
 /**
  * A CAPCO country marking is a code that represents a country or a group of

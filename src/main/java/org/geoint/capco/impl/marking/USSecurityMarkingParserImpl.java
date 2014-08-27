@@ -8,7 +8,7 @@ import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.USSecurityMarking;
 import static org.geoint.capco.marking.USSecurityMarking.*;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
-import org.geoint.capco.marking.Country;
+import org.geoint.capco.marking.component.CountryComponent;
 import org.geoint.capco.marking.SecurityMarking;
 import static org.geoint.capco.marking.SecurityMarking.*;
 import org.geoint.capco.spi.SecurityMarkingParser;
@@ -64,7 +64,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
             } else if (componentString.startsWith(FGI_IDENTIFIER)) {
                 String[] countries = componentString.substring(componentString.indexOf(FGI_IDENTIFIER) + FGI_IDENTIFIER.length()).split(" ");
                 mb.addFGICountry(countries);
-            } else if (policy().getAEAPolicy().isComponentString(componentString)) {
+            } else if (policy().getAeaPolicy().isComponentString(componentString)) {
                 mb.addACCM(componentString);
             } else {
                 //is SCI or Dissemination component
@@ -75,7 +75,7 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
                     //this _could_ be SCI...give SCI first cracks =)
                     List<String> unknownSCI = new ArrayList<>(); //caputres if there were any erronous SCI controls
                     for (String control : controls) {
-                        if (policy().getSCIPolicy().isComponentString(control)) {
+                        if (policy().getSciPolicy().isComponentString(control)) {
                             validControls.add(control);
                         } else {
                             //either this is an invalid SCI...or this really is dissem controls
@@ -124,8 +124,8 @@ public class USSecurityMarkingParserImpl extends SecurityMarkingParser<USSecurit
                                                 + "security marking.");
                                     }
                                     //add all the rel countries from the context marking
-                                    for (Country rc : ((USSecurityMarking) context).getRelCountries()) {
-                                        mb.addRelCountry(rc.getCode());
+                                    for (CountryComponent rc : ((USSecurityMarking) context).getRelCountries()) {
+                                        mb.addRelCountry(rc.getCountry().getCode());
                                     }
                                 }
                             } else if (control.startsWith(DISPLAY_IDENTIFIER)) {

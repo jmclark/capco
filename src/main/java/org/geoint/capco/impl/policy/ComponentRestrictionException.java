@@ -1,7 +1,7 @@
 package org.geoint.capco.impl.policy;
 
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 
 /**
  * Thrown when a marking component is not valid for a SecurityMarking, because

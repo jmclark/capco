@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geoint.capco.CapcoException;
-import org.geoint.capco.marking.CountryComponent;
+import org.geoint.capco.marking.component.CountryComponent;
 import org.geoint.capco.marking.SecurityMarking;
 
 /**

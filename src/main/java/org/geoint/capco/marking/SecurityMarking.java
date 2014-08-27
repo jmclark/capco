@@ -1,5 +1,6 @@
 package org.geoint.capco.marking;
 
+import org.geoint.capco.marking.component.ClassificationComponent;
 import org.geoint.capco.SecurityPolicy;
 
 /**

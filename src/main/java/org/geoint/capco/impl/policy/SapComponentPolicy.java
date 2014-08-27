@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geoint.capco.CapcoException;
 import org.geoint.capco.DuplicateComponentException;
-import org.geoint.capco.marking.SapComponent;
+import org.geoint.capco.marking.component.SapComponent;
 
 /**
  *

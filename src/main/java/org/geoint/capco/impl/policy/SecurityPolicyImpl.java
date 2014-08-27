@@ -12,17 +12,16 @@ import org.geoint.capco.marking.USSecurityMarking;
 import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.impl.marking.USSecurityMarkingBuilderImpl;
 import org.geoint.capco.impl.marking.USSecurityMarkingParserImpl;
-import org.geoint.capco.marking.AccmComponent;
-import org.geoint.capco.marking.AeaComponent;
-import org.geoint.capco.marking.ClassificationComponent;
-import org.geoint.capco.marking.DisplayToComponent;
-import org.geoint.capco.marking.DisseminationComponent;
-import org.geoint.capco.marking.FgiComponent;
-import org.geoint.capco.marking.MarkingComponent;
-import org.geoint.capco.marking.RelToComponent;
-import org.geoint.capco.marking.SciComponent;
+import org.geoint.capco.marking.component.AccmComponent;
+import org.geoint.capco.marking.component.AeaComponent;
+import org.geoint.capco.marking.component.ClassificationComponent;
+import org.geoint.capco.marking.component.DisplayToComponent;
+import org.geoint.capco.marking.component.DisseminationComponent;
+import org.geoint.capco.marking.component.FgiComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
+import org.geoint.capco.marking.component.RelToComponent;
+import org.geoint.capco.marking.component.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
-import org.geoint.capco.spi.store.SecurityPolicyStore;
 
 /**
  * This policy implementation allows for structural knowledge of the CAPCO
@@ -35,13 +34,41 @@ import org.geoint.capco.spi.store.SecurityPolicyStore;
 public class SecurityPolicyImpl implements SecurityPolicy {
 
     private final String name;
-    private final SecurityPolicyStore store;
+    private final ComponentPolicy<ClassificationComponent> classificationPolicy;
+    private final ComponentPolicy<SciComponent> sciPolicy;
+    private final SapComponentPolicy sapPolicy;
+    private final ComponentPolicy<FgiComponent> fgiPolicy;
+    private final ComponentPolicy<AeaComponent> aeaPolicy;
+    private final ComponentPolicy<RelToComponent> relPolicy;
+    private final ComponentPolicy<DisplayToComponent> displayPolicy;
+    private final ComponentPolicy<DisseminationComponent> disseminationPolicy;
+    private final ComponentPolicy<AccmComponent> accmPolicy;
+    private final ComponentRestriction[] restrictions;
 
     private static final Charset MARKING_CHARSET = Charset.forName("UTF-8");
 
-    public SecurityPolicyImpl(String name, SecurityPolicyStore store) {
+    public SecurityPolicyImpl(String name,
+            ComponentPolicy<ClassificationComponent> classificationPolicy,
+            ComponentPolicy<SciComponent> sciPolicy,
+            SapComponentPolicy sapPolicy,
+            ComponentPolicy<FgiComponent> fgiPolicy,
+            ComponentPolicy<AeaComponent> aeaPolicy,
+            ComponentPolicy<RelToComponent> relPolicy,
+            ComponentPolicy<DisplayToComponent> displayPolicy,
+            ComponentPolicy<DisseminationComponent> disseminationPolicy,
+            ComponentPolicy<AccmComponent> accmPolicy,
+            ComponentRestriction[] restrictions) {
         this.name = name;
-        this.store = store;
+        this.classificationPolicy = classificationPolicy;
+        this.sciPolicy = sciPolicy;
+        this.sapPolicy = sapPolicy;
+        this.fgiPolicy = fgiPolicy;
+        this.aeaPolicy = aeaPolicy;
+        this.relPolicy = relPolicy;
+        this.displayPolicy = displayPolicy;
+        this.disseminationPolicy = disseminationPolicy;
+        this.accmPolicy = accmPolicy;
+        this.restrictions = restrictions;
     }
 
     @Override
@@ -117,7 +144,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
             MarkingComponent component)
             throws ComponentRestrictionException, InvalidSecurityMarkingException {
         SecurityMarking lm = localize(marking);
-        for (ComponentRestriction r : store.getRestrictions()) {
+        for (ComponentRestriction r : restrictions) {
             if (!r.isPermitted(lm, component)) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("'")
@@ -135,6 +162,46 @@ public class SecurityPolicyImpl implements SecurityPolicy {
         }
     }
 
+    public ComponentPolicy<ClassificationComponent> getClassificationPolicy() {
+        return classificationPolicy;
+    }
+
+    public ComponentPolicy<SciComponent> getSciPolicy() {
+        return sciPolicy;
+    }
+
+    public SapComponentPolicy getSapPolicy() {
+        return sapPolicy;
+    }
+
+    public ComponentPolicy<FgiComponent> getFgiPolicy() {
+        return fgiPolicy;
+    }
+
+    public ComponentPolicy<AeaComponent> getAeaPolicy() {
+        return aeaPolicy;
+    }
+
+    public ComponentPolicy<RelToComponent> getRelPolicy() {
+        return relPolicy;
+    }
+
+    public ComponentPolicy<DisplayToComponent> getDisplayPolicy() {
+        return displayPolicy;
+    }
+
+    public ComponentPolicy<DisseminationComponent> getDisseminationPolicy() {
+        return disseminationPolicy;
+    }
+
+    public ComponentPolicy<AccmComponent> getAccmPolicy() {
+        return accmPolicy;
+    }
+
+    public ComponentRestriction[] getRestrictions() {
+        return restrictions;
+    }
+
     @Override
     public SecurityMarking merge(SecurityMarking... markings)
             throws CapcoException {
@@ -144,42 +211,6 @@ public class SecurityPolicyImpl implements SecurityPolicy {
             result = localize(m).merge(result);
         }
         return result;
-    }
-
-    public ComponentPolicy<ClassificationComponent> getClassificationPolicy() {
-        return store.getClassificationPolicy();
-    }
-
-    public ComponentPolicy<SciComponent> getSCIPolicy() {
-        return store.getSCIPolicy();
-    }
-
-    public SapComponentPolicy getSAPPolicy() {
-        return store.getSAPPolicy();
-    }
-
-    public ComponentPolicy<FgiComponent> getFGIPolicy() {
-        return store.getFGIPolicy();
-    }
-
-    public ComponentPolicy<AeaComponent> getAEAPolicy() {
-        return store.getAEAPolicy();
-    }
-
-    public ComponentPolicy<RelToComponent> getRelPolicy() {
-        return store.getRelPolicy();
-    }
-
-    public ComponentPolicy<DisplayToComponent> getDisplayPolicy() {
-        return store.getDisplayPolicy();
-    }
-
-    public ComponentPolicy<DisseminationComponent> getDisseminationPolicy() {
-        return store.getDisseminationPolicy();
-    }
-
-    public ComponentPolicy<AccmComponent> getACCMPolicy() {
-        return store.getACCMPolicy();
     }
 
     /**

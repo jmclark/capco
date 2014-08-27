@@ -1,6 +1,6 @@
 package org.geoint.capco;
 
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 
 /**
  *

@@ -1,7 +1,7 @@
 package org.geoint.capco.impl.policy;
 
 import org.geoint.capco.CapcoException;
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 
 /**

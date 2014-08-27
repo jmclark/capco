@@ -1,19 +1,20 @@
 package org.geoint.capco.impl.marking;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.geoint.capco.impl.policy.SecurityPolicyImpl;
-import org.geoint.capco.marking.AccmComponent;
-import org.geoint.capco.marking.AeaComponent;
-import org.geoint.capco.marking.ClassificationComponent;
-import org.geoint.capco.marking.Country;
-import org.geoint.capco.marking.DisplayToComponent;
-import org.geoint.capco.marking.DisseminationComponent;
-import org.geoint.capco.marking.FgiComponent;
+import org.geoint.capco.marking.component.AccmComponent;
+import org.geoint.capco.marking.component.AeaComponent;
+import org.geoint.capco.marking.component.ClassificationComponent;
+import org.geoint.capco.marking.component.CountryComponent;
+import org.geoint.capco.marking.component.DisplayToComponent;
+import org.geoint.capco.marking.component.DisseminationComponent;
+import org.geoint.capco.marking.component.FgiComponent;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.marking.RelToComponent;
-import org.geoint.capco.marking.SapComponent;
-import org.geoint.capco.marking.SciComponent;
+import org.geoint.capco.marking.component.RelToComponent;
+import org.geoint.capco.marking.component.SapComponent;
+import org.geoint.capco.marking.component.SciComponent;
 import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.marking.USSecurityMarking;
 import static org.geoint.capco.marking.USSecurityMarking.HVSACO_IDENTIFIER;
@@ -58,7 +59,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
         for (String control : sci) {
 
-            SciComponent component = policy.getSCIPolicy().getComponent(control);
+            SciComponent component = policy.getSciPolicy().getComponent(control);
 
             if (component == null) {
                 StringBuilder sb = new StringBuilder();
@@ -90,7 +91,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
         }
 
         for (String sn : sapNames) {
-            SapComponent sap = policy.getSAPPolicy().getComponent(sn);
+            SapComponent sap = policy.getSapPolicy().getComponent(sn);
 
             if (sap == null) {
                 StringBuilder sb = new StringBuilder();
@@ -168,7 +169,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
     public USSecurityMarkingBuilder addACCM(String... accm)
             throws InvalidSecurityMarkingException {
         for (String control : accm) {
-            AccmComponent ac = policy.getACCMPolicy().getComponent(control);
+            AccmComponent ac = policy.getAccmPolicy().getComponent(control);
             if (ac == null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Unknown ACCM control '")
@@ -191,7 +192,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
     public USSecurityMarkingBuilder addFGICountry(String... countryCodes)
             throws InvalidSecurityMarkingException {
         for (String code : countryCodes) {
-            FgiComponent f = policy.getFGIPolicy().getComponent(code);
+            FgiComponent f = policy.getFgiPolicy().getComponent(code);
 
             if (f == null) {
                 StringBuilder sb = new StringBuilder();
@@ -271,17 +272,17 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
     @Override
     public SciComponent[] getAvailableSCI() {
-        return policy.getSCIPolicy().getAvailable(m);
+        return policy.getSciPolicy().getAvailable(m);
     }
 
     @Override
     public SapComponent[] getAvailableSAP() {
-        return policy.getSAPPolicy().getAvailable(m);
+        return policy.getSapPolicy().getAvailable(m);
     }
 
     @Override
     public FgiComponent[] getAvailableFGICountries() {
-        return policy.getFGIPolicy().getAvailable(m);
+        return policy.getFgiPolicy().getAvailable(m);
     }
 
     @Override
@@ -301,7 +302,7 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
     @Override
     public AccmComponent[] getAvailableACCM() {
-        return policy.getACCMPolicy().getAvailable(m);
+        return policy.getAccmPolicy().getAvailable(m);
     }
 
     @Override
@@ -328,12 +329,12 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
         @Override
         public SciComponent[] getSCI() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return (SciComponent[]) sci.toArray();
         }
 
         @Override
         public SapComponent[] getSAP() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return (SapComponent[]) sap.toArray();
         }
 
         @Override
@@ -343,52 +344,76 @@ public class USSecurityMarkingBuilderImpl implements USSecurityMarkingBuilder {
 
         @Override
         public AeaComponent getAEA() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return null;
         }
 
         @Override
-        public Country[] getFGICountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public CountryComponent[] getFGICountries() {
+            return (CountryComponent[]) fgi.toArray();
         }
 
         @Override
-        public Country[] getRelCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public CountryComponent[] getRelCountries() {
+            return (CountryComponent[]) rel.toArray();
         }
 
         @Override
-        public Country[] getDisplayCountries() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public CountryComponent[] getDisplayCountries() {
+            return (CountryComponent[]) disp.toArray();
         }
 
         @Override
         public DisseminationComponent[] getDissemControls() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return (DisseminationComponent[]) diss.toArray();
         }
 
         @Override
         public AccmComponent[] getAccm() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asPortion() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String asBanner() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return (AccmComponent[]) accm.toArray();
         }
 
         @Override
         public SecurityPolicyImpl getPolicy() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return policy;
         }
 
         @Override
         public ClassificationComponent getClassification() {
             return classification;
+        }
+
+        @Override
+        public String asPortion() {
+            return stringify(true);
+        }
+
+        @Override
+        public String asBanner() {
+            return stringify(false);
+        }
+
+        private String stringify(boolean portion) {
+            StringBuilder sb = new StringBuilder();
+            sb.append((portion) ? classification.getPortion() : classification.getBanner())
+                    .append(SecurityMarking.COMPONENT_SEPARATOR);
+            if (!sci.isEmpty()) {
+                appendSci(sb, portion);
+            }
+        }
+
+        private void appendSci(StringBuilder sb, boolean portion) {
+            Iterator<SciComponent> iterator = sci.iterator();
+            while (iterator.hasNext()) {
+                SciComponent c = iterator.next();
+                if (portion) {
+                    sb.append(c.getPortion());
+                } else {
+                    sb.append(c.getBanner());
+                }
+                if (iterator.hasNext()) {
+                    sb.append(SecurityMarking.SUBCOMPONENT_SLASH_SEPARATOR);
+                }
+            }
         }
 
         @Override

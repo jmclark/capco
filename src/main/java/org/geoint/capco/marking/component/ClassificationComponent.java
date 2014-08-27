@@ -1,4 +1,4 @@
-package org.geoint.capco.marking;
+package org.geoint.capco.marking.component;
 
 /**
  * Base classification component

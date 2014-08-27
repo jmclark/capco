@@ -5,7 +5,7 @@ import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.JointSecurityMarkingBuilder;
 import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
-import org.geoint.capco.marking.MarkingComponent;
+import org.geoint.capco.marking.component.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
 import org.geoint.capco.marking.USSecurityMarking;
 
