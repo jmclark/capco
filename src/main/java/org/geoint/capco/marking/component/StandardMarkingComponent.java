@@ -1,19 +1,18 @@
-
 package org.geoint.capco.marking.component;
 
 import java.util.Objects;
 
 /**
- *
+ * A MarkingComponent which is simply represented by a portion and banner token.
  */
-public class StandardComponent implements MarkingComponent {
+public class StandardMarkingComponent implements MarkingComponent {
 
     private final String portion;
     private final String banner;
-    
-    public StandardComponent(String portion, String banner) {
-        this.portion = portion.intern();
-        this.banner = banner.intern();
+
+    public StandardMarkingComponent(String portion, String banner) {
+        this.portion = portion;
+        this.banner = banner;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class StandardComponent implements MarkingComponent {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final StandardComponent other = (StandardComponent) obj;
+        StandardMarkingComponent other = (StandardMarkingComponent) obj;
         if (!Objects.equals(this.portion, other.portion)) {
             return false;
         }
