@@ -1,9 +1,7 @@
-package org.geoint.capco.impl.policy;
-
-import org.geoint.capco.CapcoException;
+package org.geoint.capco;
 
 /**
- * Thrown when a requested policy is not available.
+ *
  */
 public class UnknownPolicyException extends CapcoException {
 
@@ -32,11 +30,4 @@ public class UnknownPolicyException extends CapcoException {
         return policyName;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Unknown policy '").append(policyName).append("'. ");
-        sb.append(super.toString());
-        return sb.toString();
-    }
 }

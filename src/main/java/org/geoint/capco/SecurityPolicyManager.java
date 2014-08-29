@@ -12,7 +12,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geoint.capco.impl.policy.UnknownPolicyException;
 import org.geoint.capco.spi.store.SecurityPolicyStore;
 
 /**
@@ -66,7 +65,7 @@ public final class SecurityPolicyManager {
      *
      * @param store
      */
-    public static void load(SecurityPolicyStore store) {
+    private static void load(SecurityPolicyStore store) {
         for (SecurityPolicy p : store.retrievePolicies()) {
             final String policyName = p.getName();
 
@@ -81,34 +80,6 @@ public final class SecurityPolicyManager {
         }
     }
 
-    /**
-     * Save the policy back to its original store(s).
-     *
-     * @param policy
-     */
-    public static void save(SecurityPolicy policy) {
-        final String policyName = policy.getName();
-
-        for (SecurityPolicyStore ps : stores.get(policy.getName())) {
-            try {
-                ps.save(policy);
-            } catch (IOException ex) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Unable to save security policy '").append(policyName);
-                sb.append("' to policy store '").append(ps.getClass().getName());
-                logger.log(Level.SEVERE, sb.toString(), ex);
-            }
-        }
-    }
-
-    /**
-     * Save all policies.
-     */
-    public static void saveAll() {
-        for (Entry<String, SecurityPolicy> e : policies.entrySet()) {
-            save(e.getValue());
-        }
-    }
 
     /**
      * Loads policies from discoverable policy stores.
@@ -128,28 +99,8 @@ public final class SecurityPolicyManager {
             policies = policyBag.toArray(new SecurityPolicy[policyBag.size()]);
         }
 
-        @Override
         public SecurityPolicy[] retrievePolicies() {
             return policies;
-        }
-
-        /**
-         * Save the policy to all stores that contain that policy name.
-         * <p>
-         * This is done intentionally to keep multiple policy stores in sync.
-         *
-         * @param policy
-         * @throws IOException
-         */
-        @Override
-        public void save(SecurityPolicy policy) throws IOException {
-            for (SecurityPolicyStore ps : loader) {
-                for (SecurityPolicy p : ps.retrievePolicies()) {
-                    if (p.getName().contentEquals(policy.getName())) {
-                        ps.save(policy);
-                    }
-                }
-            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.geoint.capco;
 
-import org.geoint.capco.marking.SecurityMarking;
 
 /**
  * Indicates an object can contain classified data.
@@ -12,7 +11,7 @@ public interface Classified {
      *
      * @return
      */
-    SecurityMarking getSecurityMarking();
+    String getSecurityMarking();
 
     /**
      * Return the {@link ClassificationAuthority} details for the classified

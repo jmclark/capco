@@ -3,30 +3,33 @@ package org.geoint.capco.marking;
 import org.geoint.capco.CapcoException;
 
 /**
- * Thrown when a value cannot be converted into a policy-constrained
- * {@link SecurityMarking}.
+ *
  */
 public class InvalidSecurityMarkingException extends CapcoException {
 
-    private final String marking;
+    private final String invaidMarking;
 
-    public InvalidSecurityMarkingException(String marking, String message) {
+    public InvalidSecurityMarkingException(String invaidMarking) {
+        this.invaidMarking = invaidMarking;
+    }
+
+    public InvalidSecurityMarkingException(String invaidMarking, String message) {
         super(message);
-        this.marking = marking;
+        this.invaidMarking = invaidMarking;
     }
 
-    public InvalidSecurityMarkingException(String marking, String message, Throwable cause) {
+    public InvalidSecurityMarkingException(String invaidMarking, String message, Throwable cause) {
         super(message, cause);
-        this.marking = marking;
+        this.invaidMarking = invaidMarking;
     }
 
-    public InvalidSecurityMarkingException(String marking, Throwable cause) {
+    public InvalidSecurityMarkingException(String invaidMarking, Throwable cause) {
         super(cause);
-        this.marking = marking;
+        this.invaidMarking = invaidMarking;
     }
 
-    public String getMarking() {
-        return marking;
+    public String getInvaidMarking() {
+        return invaidMarking;
     }
 
 }

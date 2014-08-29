@@ -1,13 +1,8 @@
 package org.geoint.capco;
 
-import org.geoint.capco.impl.policy.ComponentRestrictionException;
-import org.geoint.capco.marking.USSecurityMarkingBuilder;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
-import org.geoint.capco.marking.JointSecurityMarkingBuilder;
-import org.geoint.capco.marking.ForeignSecurityMarkingBuilder;
-import org.geoint.capco.marking.component.MarkingComponent;
 import org.geoint.capco.marking.SecurityMarking;
-import org.geoint.capco.marking.USSecurityMarking;
+
 
 /**
  * A security policy is configured to manage the available security marking
@@ -31,31 +26,6 @@ public interface SecurityPolicy {
      */
     String getName();
 
-    /**
-     * Return a {@link USSecurityMarking} builder for programmatic construction
-     * of a US security marking.
-     *
-     * The builder is NOT thread-safe.
-     *
-     * @return
-     */
-    USSecurityMarkingBuilder builder();
-
-    /**
-     * Returns a builder for programmatic construction of a joint security
-     * marking.
-     *
-     * @return
-     */
-    JointSecurityMarkingBuilder jointBuilder();
-
-    /**
-     * Returns a builder for programmatic construction of a foreign security
-     * marking.
-     *
-     * @return
-     */
-    ForeignSecurityMarkingBuilder foreignBuilder();
 
     /**
      * Parses the provided String and returns the relevant
@@ -115,19 +85,6 @@ public interface SecurityPolicy {
      */
     boolean isPermitted(SecurityMarking m1, SecurityMarking m2) 
             throws InvalidSecurityMarkingException;
-
-    /**
-     * Determines if the component can be added to the marking within the scope
-     * of this policy.
-     *
-     * @param marking
-     * @param component
-     * @return
-     * @throws ComponentRestrictionException
-     * @throws InvalidSecurityMarkingException
-     */
-    boolean isPermitted(SecurityMarking marking, MarkingComponent component)
-            throws ComponentRestrictionException, InvalidSecurityMarkingException;
 
     /**
      * Merges the provided markings into a single, encompassing, marking
