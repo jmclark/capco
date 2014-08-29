@@ -1,4 +1,4 @@
-package org.geoint.capco;
+package org.geoint.capco.policy;
 
 import java.io.IOException;
 import java.util.ArrayList;

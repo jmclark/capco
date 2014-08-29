@@ -1,6 +1,6 @@
 package org.geoint.capco.spi.store;
 
-import org.geoint.capco.SecurityPolicy;
+import org.geoint.capco.policy.SecurityPolicy;
 
 /**
  *

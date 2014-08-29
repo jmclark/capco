@@ -3,6 +3,6 @@ package org.geoint.capco.marking;
 /**
  *
  */
-public interface SecurityMarking {
+public interface SecurityMarking extends SecurityComponent {
 
 }

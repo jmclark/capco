@@ -1,5 +1,6 @@
-package org.geoint.capco;
+package org.geoint.capco.policy;
 
+import org.geoint.capco.CapcoException;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.SecurityMarking;
 
@@ -75,7 +76,7 @@ public interface SecurityPolicy {
 
     /**
      * Compares the security markings to determine if the second parameter is
-     * permitted within the contenxt of the first.
+     * permitted within the context of the first.
      *
      * @param m1 base marking
      * @param m2 comparison marking
@@ -96,4 +97,37 @@ public interface SecurityPolicy {
      */
     SecurityMarking merge(SecurityMarking... markings) throws CapcoException;
 
+    /**
+     * Converts the provided markings and merges them into an overall 
+     * classification.
+     * 
+     * @param markings
+     * @return
+     * @throws CapcoException 
+     */
+    SecurityMarking merge(String... markings) throws CapcoException;
+    
+    /**
+     * Returns the category names for this policy.
+     * 
+     * @return 
+     */
+    String[] getCategoryNames();
+    
+    /**
+     * Returns the category policy for the specified category.
+     * 
+     * @param categoryName
+     * @return 
+     */
+    CategoryPolicy getCategory(String categoryName);
+    
+    /**
+     * Returns a marking builder for this policy.
+     * 
+     * @return 
+     */
+    SecurityMarkingBuilder markingBuilder();
+    
+    
 }
