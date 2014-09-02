@@ -16,12 +16,12 @@ public interface CategoryPolicy {
     String getName();
 
     /**
-     * Returns the optional category label to apply to the
+     * Returns the optional category formatter to apply to the
      * {@link SecurityMarking} while rendering
      *
      * @return
      */
-    SecurityLabel getLabel();
+    CategoryFormat getFormatter();
 
     /**
      * Indicates if the security category is required in a valid
