@@ -1,5 +1,6 @@
-package org.geoint.capco.policy;
+package org.geoint.capco.policy.control;
 
+import org.geoint.capco.policy.CompartmentPolicy;
 import java.util.Arrays;
 import java.util.Objects;
 

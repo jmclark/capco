@@ -8,7 +8,7 @@ import org.geoint.capco.marking.SecurityLabel;
 /**
  *
  */
-public class CompartmentPolicy implements SecurityLabel {
+public abstract class CompartmentPolicy implements SecurityLabel {
 
     private final String portion;
     private final String banner;

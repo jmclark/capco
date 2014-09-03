@@ -1,11 +1,13 @@
-package org.geoint.capco.policy;
+package org.geoint.capco.policy.control;
 
 import java.util.Objects;
 
 /**
- * Control policy which accounts for an additional (String) name for the
- * control.
+ * An control which has a potential third token.
  *
+ * The alias control may be found using its portion, banner, or alias tokens in
+ * the wild. This control is useful for categories such as with the SAP category
+ * in the US security marking.
  */
 public class AliasControlPolicy extends StandardControlPolicy {
 
@@ -23,9 +25,9 @@ public class AliasControlPolicy extends StandardControlPolicy {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.alias);
-        hash = 59 * hash + Objects.hashCode(this.getPortion());
-        hash = 59 * hash + Objects.hashCode(this.getBanner());
+        hash = 43 * hash + Objects.hashCode(this.alias);
+        hash = 43 * hash + Objects.hashCode(this.getPortion());
+        hash = 43 * hash + Objects.hashCode(this.getBanner());
         return hash;
     }
 

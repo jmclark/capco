@@ -1,9 +1,9 @@
-package org.geoint.capco.policy;
+package org.geoint.capco.policy.control;
 
 import java.util.Objects;
 
 /**
- *
+ * A control which simply contains a portion and banner token.
  */
 public class StandardControlPolicy implements SecurityControlPolicy {
 
@@ -27,14 +27,14 @@ public class StandardControlPolicy implements SecurityControlPolicy {
 
     @Override
     public String toString() {
-        return portion;
+        return getPortion();
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.portion);
-        hash = 97 * hash + Objects.hashCode(this.banner);
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.portion);
+        hash = 19 * hash + Objects.hashCode(this.banner);
         return hash;
     }
 
@@ -55,4 +55,5 @@ public class StandardControlPolicy implements SecurityControlPolicy {
         }
         return true;
     }
+
 }
