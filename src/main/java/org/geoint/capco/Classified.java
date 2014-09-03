@@ -1,5 +1,6 @@
 package org.geoint.capco;
 
+import org.geoint.capco.marking.SecurityMarking;
 
 /**
  * Indicates an object can contain classified data.
@@ -7,11 +8,11 @@ package org.geoint.capco;
 public interface Classified {
 
     /**
-     * Return the {@link SecurityMarking} for the data component.
+     * Return the stringified {@link SecurityMarking} for the data component.
      *
      * @return
      */
-    String getSecurityMarking();
+    String getClassification();
 
     /**
      * Return the {@link ClassificationAuthority} details for the classified
@@ -20,4 +21,18 @@ public interface Classified {
      * @return
      */
     ClassificationAuthority getClassificationAuthority();
+
+    /**
+     * Returns the underlying {@link SecurityMarking} for the data component.
+     *
+     * Note: A SecurityMarking may be lazily created for an object, as the
+     * stringified/binary representation of a SecurityMarking is often the
+     * actual value persistently stored. If it isn't needed to use the
+     * {@link SecurityMarking} itself, but just the String representation (ie to
+     * display) it's often best to simply call the
+     * {@link Classified#getClassification()} method instead.
+     *
+     * @return
+     */
+    SecurityMarking getSecurityMarking();
 }

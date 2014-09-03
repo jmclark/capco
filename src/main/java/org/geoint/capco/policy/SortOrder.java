@@ -1,17 +1,30 @@
 package org.geoint.capco.policy;
 
-/**
- * The defined, natural, sort order used when formatting a category/control,
- * when the category/control does not implement {@link Comparable}.
- */
-public enum SortOrder {
+import java.util.Comparator;
+import org.geoint.capco.marking.SecurityComponent;
 
-    /**
-     * Natural sort order ascending
-     */
-    ASC,
-    /**
-     * Natural sort order descending
-     */
-    DESC;
+/**
+ * The defined sort order used when formatting a {@link SecurityComponent}.
+ * 
+ * @param <C>
+ */
+public class SortOrder <C extends SecurityComponent> {
+
+    private final Comparator<C> portion;
+    private final Comparator<C> banner;
+
+    public SortOrder(Comparator<C> portion,
+            Comparator<C> banner) {
+        this.portion = portion;
+        this.banner = banner;
+    }
+
+    public Comparator<C> getPortion() {
+        return portion;
+    }
+
+    public Comparator<C> getBanner() {
+        return banner;
+    }
+
 }

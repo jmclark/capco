@@ -1,5 +1,7 @@
 package org.geoint.capco.marking;
 
+import org.geoint.capco.marking.control.Compartment;
+
 /**
  * Indicates that a security category is compartmentalized.
  *
@@ -7,9 +9,8 @@ package org.geoint.capco.marking;
  * compartments, which may be further compartmentalized. Access to
  * compartmentalized data is normally restricted to users with the need-to-know.
  *
- * @param <C>
  */
-public interface Compartmentalized<C extends Compartment> extends SecurityCategory {
+public interface Compartmentalized extends SecurityCategory {
 
-    C[] getCompartments();
+    Compartment[] getCompartments();
 }

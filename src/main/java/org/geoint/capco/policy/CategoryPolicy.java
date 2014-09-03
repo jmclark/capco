@@ -21,7 +21,7 @@ public interface CategoryPolicy {
      *
      * @return
      */
-    CategoryFormat getFormatter();
+    CategoryFormat getFormat();
 
     /**
      * Indicates if the security category is required in a valid
@@ -64,5 +64,5 @@ public interface CategoryPolicy {
      * @return
      */
     SecurityLabel getOverflowLabel();
-
+    
 }
