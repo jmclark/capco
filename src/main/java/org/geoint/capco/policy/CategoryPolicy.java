@@ -13,8 +13,15 @@ public interface CategoryPolicy {
      *
      * @return
      */
-    String getName();
+    String getCategoryName();
 
+    /**
+     * Return the name of the containing policy.
+     * 
+     * @return 
+     */
+    String getPolicyName();
+    
     /**
      * Returns the optional category formatter to apply to the
      * {@link SecurityMarking} while rendering

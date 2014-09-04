@@ -1,6 +1,6 @@
 package org.geoint.capco.policy;
 
-import org.geoint.capco.CapcoException;
+import org.geoint.capco.LbacException;
 import org.geoint.capco.marking.InvalidSecurityMarkingException;
 import org.geoint.capco.marking.SecurityMarking;
 
@@ -92,10 +92,10 @@ public interface SecurityPolicy {
      *
      * @param markings
      * @return
-     * @throws CapcoException if markings are not from the same policy and could
+     * @throws LbacException if markings are not from the same policy and could
      * not be converted
      */
-    SecurityMarking merge(SecurityMarking... markings) throws CapcoException;
+    SecurityMarking merge(SecurityMarking... markings) throws LbacException;
 
     /**
      * Converts the provided markings and merges them into an overall 
@@ -103,9 +103,9 @@ public interface SecurityPolicy {
      * 
      * @param markings
      * @return
-     * @throws CapcoException 
+     * @throws LbacException 
      */
-    SecurityMarking merge(String... markings) throws CapcoException;
+    SecurityMarking merge(String... markings) throws LbacException;
     
     /**
      * Returns the category names for this policy.

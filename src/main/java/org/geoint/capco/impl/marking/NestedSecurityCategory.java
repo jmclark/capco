@@ -75,7 +75,7 @@ public class NestedSecurityCategory extends AbstractSecurityCategory {
             }
 
             if (catIterator.hasNext()) {
-                sb.append(policy.getFormat().getSeparator());
+                sb.append(policy.getFormat().getControlSeparator());
             }
         }
 

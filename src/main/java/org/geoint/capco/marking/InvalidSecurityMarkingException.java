@@ -1,11 +1,11 @@
 package org.geoint.capco.marking;
 
-import org.geoint.capco.CapcoException;
+import org.geoint.capco.LbacException;
 
 /**
  *
  */
-public class InvalidSecurityMarkingException extends CapcoException {
+public class InvalidSecurityMarkingException extends LbacException {
 
     private final String invaidMarking;
 

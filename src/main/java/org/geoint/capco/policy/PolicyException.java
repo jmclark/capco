@@ -1,11 +1,11 @@
 package org.geoint.capco.policy;
 
-import org.geoint.capco.CapcoException;
+import org.geoint.capco.LbacException;
 
 /**
  *
  */
-public class PolicyException extends CapcoException {
+public class PolicyException extends LbacException {
 
     private final String policyName;
 

@@ -5,9 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.geoint.capco.marking.Compartmentalized;
 import org.geoint.capco.marking.control.SecurityControl;
-import org.geoint.capco.policy.CategoryFormat;
 import org.geoint.capco.policy.SimpleCategoryPolicy;
 
 /**
@@ -78,21 +76,13 @@ public class SimpleSecurityCategory extends AbstractSecurityCategory {
         Iterator<SecurityControl> iterator = sortedControls.iterator();
         while (iterator.hasNext()) {
             SecurityControl c = iterator.next();
-
-            if (Compartmentalized.class.isAssignableFrom(c.getClass())) {
-                //control is compartmentalized, we need to sort the 
-                //sub-compartments as necessary
-                
+            if (portion) {
+                sb.append(c.getPortion());
             } else {
-                //control isn't compartmentalized
-                if (portion) {
-                    sb.append(c.getPortion());
-                } else {
-                    sb.append(c.getBanner());
-                }
-                if (iterator.hasNext()) {
-                    sb.append(policy.getFormat().getSeparator());
-                }
+                sb.append(c.getBanner());
+            }
+            if (iterator.hasNext()) {
+                sb.append(policy.getFormat().getControlSeparator());
             }
         }
 
