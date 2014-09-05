@@ -2,14 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.ic.geoint</groupId>
-    <artifactId>capco-classification</artifactId>
+    <groupId>org.geoint</groupId>
+    <artifactId>lbac</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>capco-classification</name>
-    <description>Library which supports CAPCO security markings based on 
-        configurable policies.</description>
+    <name>lbac</name>
+    <description>Library for policy-defined Label Based Access Control (LBAC).</description>
     <build>
         <plugins>
             <plugin>
