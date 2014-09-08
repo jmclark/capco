@@ -17,7 +17,7 @@ public interface SimpleCategoryPolicy extends CategoryPolicy {
      *
      * @return
      */
-    SecurityControlPolicy[] getControls();
+    SecurityControlPolicy[] getControlPolicies();
 
     /**
      * Return a {@link SecurityControlPolicy} for the provided value for this
@@ -29,5 +29,5 @@ public interface SimpleCategoryPolicy extends CategoryPolicy {
      * @param controlValue
      * @return
      */
-    SecurityControlPolicy getControl(String controlValue);
+    SecurityControlPolicy getControlPolicy(String controlValue);
 }

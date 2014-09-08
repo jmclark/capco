@@ -1,5 +1,6 @@
 package org.geoint.lbac.impl.marking;
 
+import org.geoint.lbac.impl.command.AddComponentCommand;
 import org.geoint.lbac.impl.command.CompositeMarkingChangeCommand;
 import org.geoint.lbac.impl.command.MarkingChangeCommand;
 import org.geoint.lbac.impl.policy.SecurityPolicyImpl;
@@ -28,12 +29,17 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     @Override
     public SecurityMarkingBuilder addControl(String category, String control)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
+
+        SecurityControlPolicy conPolicy = getControlPolicy(category, control);
+        SecurityControl ctl = conPolicy.getControl();
         
+        MarkingChangeCommand cmd = new AddComponentCommand(ctl);
+        MarkingChangeCommand runCmd = applyRestrictions(cmd);
     }
 
     /**
-     * Returns the SecurityControlPolicy or null if not a valid control for the
-     * requested category.
+     * Returns the SecurityControlPolicy or throws and
+     * UnknownSecurityComponentException if the control isn't found.
      *
      * @param category
      * @param control
@@ -48,7 +54,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
             StringBuilder sb = new StringBuilder();
             sb.append("Unknown marking category '")
                     .append(category)
-                    .append("'.  Unable to add control '")
+                    .append("'.  Unable to retrieve control '")
                     .append(control)
                     .append("'.");
             throw new UnknownSecurityComponentException(policy, category,
@@ -64,7 +70,22 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
                     control, sb.toString());
         }
 
-        return ((SimpleCategoryPolicy) cat).getControl(control);
+        SecurityControlPolicy conPolicy = ((SimpleCategoryPolicy) cat)
+                .getControlPolicy(control);
+        if (conPolicy == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Unknown security control value '")
+                    .append(control)
+                    .append("' for category '")
+                    .append(category)
+                    .append("' in policy '")
+                    .append(policy.getName())
+                    .append("'.");
+            throw new UnknownSecurityComponentException(policy, category,
+                    control, sb.toString());
+        }
+
+        return conPolicy;
     }
 
     @Override
