@@ -21,7 +21,8 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     private final SecurityRestriction[] restrictions;
     private final Map<String, CategoryPolicy> categories;
 
-    public SecurityPolicyImpl(String name, CategoryPolicy[] categories, SecurityRestriction[] restrictions) {
+    public SecurityPolicyImpl(String name, CategoryPolicy[] categories, 
+            SecurityRestriction[] restrictions) {
         this.name = name;
         this.restrictions = restrictions;
         this.categories = new HashMap<>();

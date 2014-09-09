@@ -2,7 +2,6 @@ package org.geoint.lbac.impl.policy;
 
 import java.util.Arrays;
 import java.util.Objects;
-import org.geoint.lbac.marking.SecurityLabel;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 
 /**
@@ -12,17 +11,25 @@ public class CompartmentControlPolicyImpl implements CompartmentControlPolicy {
 
     private final String policyName;
     private final String categoryName;
+    private final String compartmentName;
     private final String portion;
     private final String banner;
-    private final SecurityLabel[] subcomponents;
+    private final SubCompartmentPolicy[] subcomponents;
 
     public CompartmentControlPolicyImpl(String policyName, String categoryName,
-            String portion, String banner, SecurityLabel... subcomponents) {
+            String compartmentName, String portion, String banner,
+            SubCompartmentPolicy... subcomponents) {
         this.policyName = policyName;
         this.categoryName = categoryName;
+        this.compartmentName = compartmentName;
         this.portion = portion;
         this.banner = banner;
         this.subcomponents = subcomponents;
+    }
+
+    @Override
+    public String getCompartment() {
+        return compartmentName;
     }
 
     @Override
@@ -30,7 +37,8 @@ public class CompartmentControlPolicyImpl implements CompartmentControlPolicy {
         return policyName;
     }
 
-    public String getCategoryName() {
+    @Override
+    public String getCategory() {
         return categoryName;
     }
 
@@ -44,7 +52,8 @@ public class CompartmentControlPolicyImpl implements CompartmentControlPolicy {
         return banner;
     }
 
-    public SecurityLabel[] getSubcomponents() {
+    @Override
+    public SubCompartmentPolicy[] getSubcomponents() {
         return subcomponents;
     }
 

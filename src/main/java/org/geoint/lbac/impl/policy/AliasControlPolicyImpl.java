@@ -6,11 +6,12 @@ import org.geoint.lbac.policy.control.AliasControlPolicy;
 /**
  *
  */
-public class AliasControlPolicyImpl extends StandardControlPolicyImpl implements AliasControlPolicy {
+public class AliasControlPolicyImpl extends StandardControlPolicyImpl
+        implements AliasControlPolicy {
 
     private final String alias;
 
-    public AliasControlPolicyImpl(String policyName, String categoryName, 
+    public AliasControlPolicyImpl(String policyName, String categoryName,
             String portion, String banner, String alias) {
         super(policyName, categoryName, portion, banner);
         this.alias = alias;

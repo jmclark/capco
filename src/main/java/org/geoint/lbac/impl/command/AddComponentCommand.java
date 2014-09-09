@@ -2,16 +2,20 @@ package org.geoint.lbac.impl.command;
 
 import org.geoint.lbac.impl.marking.SecurityMarkingBuilderImpl;
 import org.geoint.lbac.marking.SecurityComponent;
+import org.geoint.lbac.marking.SecurityMarking;
 
 /**
  * Adds a {@link SecurityComponent}.
  */
 public class AddComponentCommand implements MarkingChangeCommand {
 
+    private final SecurityMarking context;
     private final SecurityComponent component;
 
-    public AddComponentCommand(SecurityComponent component) {
+    public AddComponentCommand(SecurityMarking context,
+            SecurityComponent component) {
         this.component = component;
+        this.context = context;
     }
 
     @Override
@@ -20,8 +24,8 @@ public class AddComponentCommand implements MarkingChangeCommand {
     }
 
     @Override
-    public void rollback(SecurityMarkingBuilderImpl builder) throws CommandExecutionException {
-        builder.doRemove(component);
+    public SecurityMarking getContext() {
+        return context;
     }
 
 }

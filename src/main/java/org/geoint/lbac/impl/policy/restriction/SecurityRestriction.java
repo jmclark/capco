@@ -16,11 +16,14 @@ import org.geoint.lbac.marking.SecurityMarking;
 public interface SecurityRestriction {
 
     /**
-     * Check if this command is restricted.
+     * Check if this command is restricted, returning a new command(s) that
+     * replaces the provided command.
      *
      * @param command
-     * @return the new command to execute, based on the restriction, or null if
-     * the provided command is not restricted
+     * @return replacement command(s) if the restriction changes the command or
+     * null if no changes are needed
+     * @throws SecurityRestrictionException if the command cannot be made
      */
-    MarkingChangeCommand restrict(MarkingChangeCommand command);
+    MarkingChangeCommand[] restrict(MarkingChangeCommand command)
+            throws SecurityRestrictionException;
 }

@@ -56,7 +56,7 @@ public class CompartmentedSecurityControlImpl
     
     private static String generateKey(CompartmentedControlPolicy policy,
             String portion) {
-        return policy.getCategoryName() + ":" + portion;
+        return policy.getCategory() + ":" + portion;
     }
     
     @Override

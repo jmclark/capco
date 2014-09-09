@@ -27,7 +27,7 @@ public class StandardControlPolicyImpl implements SecurityControlPolicy {
     }
 
     @Override
-    public String getCategoryName() {
+    public String getCategory() {
         return categoryName;
     }
 

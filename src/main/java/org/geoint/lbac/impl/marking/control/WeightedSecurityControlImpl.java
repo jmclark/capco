@@ -1,6 +1,8 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
+import org.geoint.lbac.impl.ComponentCache;
+import static org.geoint.lbac.impl.marking.control.StandardSecurityControlImpl.generateKey;
 import org.geoint.lbac.marking.control.WeightedSecurityControl;
 import org.geoint.lbac.policy.control.WeightedControlPolicy;
 
@@ -12,10 +14,26 @@ public class WeightedSecurityControlImpl extends StandardSecurityControlImpl
 
     private final int weight;
 
-    public WeightedSecurityControlImpl(WeightedControlPolicy policy, String portion, String banner,
+    private WeightedSecurityControlImpl(String cachKey, WeightedControlPolicy policy,
+            String portion, String banner,
             int weight) {
-        super(policy, portion, banner);
+        super(cachKey, policy, portion, banner);
         this.weight = weight;
+    }
+
+    public static WeightedSecurityControlImpl instance(
+            WeightedControlPolicy policy,
+            String portion, String banner, int weight) {
+        final String cacheKey = generateKey(policy, portion);
+        WeightedSecurityControlImpl cached = ComponentCache.get(
+                WeightedSecurityControlImpl.class, policy.getPolicyName(),
+                cacheKey);
+        if (cached == null) {
+            cached = new WeightedSecurityControlImpl(cacheKey, policy,
+                    portion, banner, weight);
+            ComponentCache.put(cached);
+        }
+        return cached;
     }
 
     @Override

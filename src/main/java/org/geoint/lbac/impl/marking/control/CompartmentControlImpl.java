@@ -17,7 +17,7 @@ public class CompartmentControlImpl
     private final CompartmentControlPolicy policy;
     private final String cacheKey;
 
-    public CompartmentControlImpl(String cacheKey, CompartmentControlPolicy policy,
+    private CompartmentControlImpl(String cacheKey, CompartmentControlPolicy policy,
             String portion, String banner, SubCompartment... subcompartments) {
         this.cacheKey = cacheKey;
         this.policy = policy;
@@ -40,7 +40,7 @@ public class CompartmentControlImpl
     }
 
     private static String generateKey(CompartmentControlPolicy policy, String portion) {
-        return policy.getCategoryName() + ":" + portion;
+        return policy.getCategory() + ":" + portion;
     }
 
     @Override

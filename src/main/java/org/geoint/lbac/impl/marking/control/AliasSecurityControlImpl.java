@@ -1,6 +1,8 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
+import org.geoint.lbac.impl.ComponentCache;
+import static org.geoint.lbac.impl.marking.control.StandardSecurityControlImpl.generateKey;
 import org.geoint.lbac.marking.control.AliasSecurityControl;
 import org.geoint.lbac.policy.control.AliasControlPolicy;
 
@@ -12,10 +14,25 @@ public class AliasSecurityControlImpl extends StandardSecurityControlImpl
 
     private final String alias;
 
-    private AliasSecurityControlImpl(AliasControlPolicy policy, 
+    private AliasSecurityControlImpl(String cacheKey, AliasControlPolicy policy,
             String portion, String banner, String alias) {
-        super(policy, portion, banner);
+        super(cacheKey, policy, portion, banner);
         this.alias = alias;
+    }
+
+    public static AliasSecurityControlImpl instance(
+            AliasControlPolicy policy,
+            String portion, String banner, String alias) {
+        final String cacheKey = generateKey(policy, portion);
+        AliasSecurityControlImpl cached = ComponentCache.get(
+                AliasSecurityControlImpl.class, policy.getPolicyName(),
+                cacheKey);
+        if (cached == null) {
+            cached = new AliasSecurityControlImpl(cacheKey, policy,
+                    portion, banner, alias);
+            ComponentCache.put(cached);
+        }
+        return cached;
     }
 
     @Override

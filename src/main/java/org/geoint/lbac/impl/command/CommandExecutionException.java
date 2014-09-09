@@ -9,21 +9,14 @@ public class CommandExecutionException extends LbacException {
 
     private final MarkingChangeCommand command;
 
-    public CommandExecutionException(MarkingChangeCommand command) {
-        this.command = command;
-    }
-
-    public CommandExecutionException(MarkingChangeCommand command, String message) {
-        super(message);
-        this.command = command;
-    }
-
-    public CommandExecutionException(MarkingChangeCommand command, String message, Throwable cause) {
+    public CommandExecutionException(MarkingChangeCommand command,
+            String message, Throwable cause) {
         super(message, cause);
         this.command = command;
     }
 
-    public CommandExecutionException(MarkingChangeCommand command, Throwable cause) {
+    public CommandExecutionException(MarkingChangeCommand command,
+            Throwable cause) {
         super(cause);
         this.command = command;
     }

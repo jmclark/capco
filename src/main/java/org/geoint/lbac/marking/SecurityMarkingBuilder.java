@@ -38,11 +38,14 @@ public interface SecurityMarkingBuilder {
      *
      * @param control
      * @return
+     * @throws UnknownSecurityComponentException if the control provided is not
+     * of the same policy, and the policy in this context does not contain that
+     * control
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
     SecurityMarkingBuilder addControl(SecurityControl control)
-            throws SecurityRestrictionException;
+            throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
      * Removes a {@link SecurityControl} to a category within the
@@ -51,32 +54,35 @@ public interface SecurityMarkingBuilder {
      * This method if functionally equivalent to retrieving the control instance
      * from the {@link SecurityPolicy} and calling 
      * {@link SecurityMarkingBuilder#removeControl(SecurityControl) }
-     * 
+     *
      * @param category
      * @param control
      * @return
      * @throws UnknownSecurityComponentException if the control is unknown in
      * the context of this policy
      * @throws SecurityRestrictionException if a restriction prevents this
-     * action from happening 
+     * action from happening
      */
     SecurityMarkingBuilder removeControl(String category, String control)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Attempts to remove a {@link SecurityControl} from the 
+     * Attempts to remove a {@link SecurityControl} from the
      * {@link SecurityMarking}.
-     * 
+     *
      * The {@link SecurityPolicy} is first checked for any restrictions that may
      * morph the action taken by adding this control (based on those
      * restrictions).
-     * 
+     *
      * @param control
      * @return
+     * @throws UnknownSecurityComponentException if the control provided is not
+     * of the same policy, and the policy in this context does not contain that
+     * control
      * @throws SecurityRestrictionException if a restriction prevents this
-     * action from happening 
+     * action from happening
      */
     SecurityMarkingBuilder removeControl(SecurityControl control)
-            throws SecurityRestrictionException;
+            throws UnknownSecurityComponentException, SecurityRestrictionException;
 
 }

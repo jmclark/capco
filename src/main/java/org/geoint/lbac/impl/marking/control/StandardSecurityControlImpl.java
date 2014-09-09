@@ -1,6 +1,7 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
+import org.geoint.lbac.impl.ComponentCache;
 import org.geoint.lbac.impl.marking.CacheableSecurityComponent;
 import org.geoint.lbac.marking.control.SecurityControl;
 import org.geoint.lbac.policy.control.SecurityControlPolicy;
@@ -15,12 +16,34 @@ public class StandardSecurityControlImpl
     private final String portion;
     private final String banner;
     private final SecurityControlPolicy policy;
+    private final String cachedKey;
 
-    public StandardSecurityControlImpl(SecurityControlPolicy policy,
-            String portion, String banner) {
+    protected StandardSecurityControlImpl(String cacheKey,
+            SecurityControlPolicy policy, String portion, String banner) {
+        this.cachedKey = cacheKey;
         this.portion = portion;
         this.banner = banner;
         this.policy = policy;
+    }
+
+    public static StandardSecurityControlImpl instance(
+            SecurityControlPolicy policy,
+            String portion, String banner) {
+        final String cacheKey = generateKey(policy, portion);
+        StandardSecurityControlImpl cached = ComponentCache.get(
+                StandardSecurityControlImpl.class, policy.getPolicyName(),
+                cacheKey);
+        if (cached == null) {
+            cached = new StandardSecurityControlImpl(cacheKey, policy,
+                    portion, banner);
+            ComponentCache.put(cached);
+        }
+        return cached;
+    }
+
+    protected static String generateKey(SecurityControlPolicy policy,
+            String portion) {
+        return policy.getCategory() + ":" + portion;
     }
 
     @Override
@@ -50,7 +73,7 @@ public class StandardSecurityControlImpl
      */
     @Override
     public String cacheKey() {
-        return portion;
+        return cachedKey;
     }
 
     @Override
