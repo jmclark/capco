@@ -47,6 +47,11 @@ public class NestedSecurityCategory extends AbstractSecurityCategory {
         return cachedBanner;
     }
 
+    @Override
+    public String getPath() {
+        return policy.getPath();
+    }
+
     private String stringify(boolean portion) {
         StringBuilder sb = new StringBuilder();
 
@@ -81,5 +86,4 @@ public class NestedSecurityCategory extends AbstractSecurityCategory {
 
         return sb.toString();
     }
-
 }

@@ -1,8 +1,6 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
-import org.geoint.lbac.impl.ComponentCache;
-import org.geoint.lbac.impl.marking.CacheableSecurityComponent;
 import org.geoint.lbac.marking.control.SecurityControl;
 import org.geoint.lbac.policy.control.SecurityControlPolicy;
 
@@ -11,39 +9,22 @@ import org.geoint.lbac.policy.control.SecurityControlPolicy;
  * portion/banner tokens.
  */
 public class StandardSecurityControlImpl
-        implements SecurityControl, CacheableSecurityComponent {
+    implements SecurityControl {
 
-    private final String portion;
-    private final String banner;
     private final SecurityControlPolicy policy;
-    private final String cachedKey;
 
-    protected StandardSecurityControlImpl(String cacheKey,
-            SecurityControlPolicy policy, String portion, String banner) {
-        this.cachedKey = cacheKey;
-        this.portion = portion;
-        this.banner = banner;
+    protected StandardSecurityControlImpl(SecurityControlPolicy policy) {
         this.policy = policy;
     }
 
-    public static StandardSecurityControlImpl instance(
-            SecurityControlPolicy policy,
-            String portion, String banner) {
-        final String cacheKey = generateKey(policy, portion);
-        StandardSecurityControlImpl cached = ComponentCache.get(
-                StandardSecurityControlImpl.class, policy.getPolicyName(),
-                cacheKey);
-        if (cached == null) {
-            cached = new StandardSecurityControlImpl(cacheKey, policy,
-                    portion, banner);
-            ComponentCache.put(cached);
-        }
-        return cached;
+    public static StandardSecurityControlImpl instance(SecurityControlPolicy policy) {
+        return new StandardSecurityControlImpl(policy);
+
     }
 
-    protected static String generateKey(SecurityControlPolicy policy,
-            String portion) {
-        return policy.getCategory() + ":" + portion;
+    @Override
+    public String getPath() {
+        return policy.getPath();
     }
 
     @Override
@@ -53,27 +34,12 @@ public class StandardSecurityControlImpl
 
     @Override
     public String getPortion() {
-        return portion;
+        return policy.getPortion();
     }
 
     @Override
     public String getBanner() {
-        return banner;
-    }
-
-    @Override
-    public String getPolicyName() {
-        return policy.getPolicyName();
-    }
-
-    /**
-     * Uses the portion marking of the control as the key.
-     *
-     * @return
-     */
-    @Override
-    public String cacheKey() {
-        return cachedKey;
+        return policy.getBanner();
     }
 
     @Override
@@ -84,8 +50,6 @@ public class StandardSecurityControlImpl
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 73 * hash + Objects.hashCode(this.portion);
-        hash = 73 * hash + Objects.hashCode(this.banner);
         hash = 73 * hash + Objects.hashCode(this.policy);
         return hash;
     }
@@ -99,16 +63,9 @@ public class StandardSecurityControlImpl
             return false;
         }
         final StandardSecurityControlImpl other = (StandardSecurityControlImpl) obj;
-        if (!Objects.equals(this.portion, other.portion)) {
-            return false;
-        }
-        if (!Objects.equals(this.banner, other.banner)) {
-            return false;
-        }
         if (!Objects.equals(this.policy, other.policy)) {
             return false;
         }
         return true;
     }
-
 }

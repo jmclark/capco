@@ -2,29 +2,27 @@ package org.geoint.lbac.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.geoint.lbac.impl.marking.CacheableSecurityComponent;
+import org.geoint.lbac.marking.SecurityComponent;
 
 /**
  * Centralized security component cache.
  */
 public class ComponentCache {
 
-    private final static Map<String, CacheableSecurityComponent> cache
-            = new HashMap<>();
-    private static final String KEY_SEPARATOR = ":";
+    private final static Map<String, SecurityComponent> cache
+            = new HashMap<>();  //not weak...we want it to stick around
 
     /**
      * Returns the cached component for the key.
      *
      * @param <T>
      * @param type
-     * @param policyName
-     * @param key
+     * @param componentPath
      * @return cached component or null if it isn't cached
      */
-    public static <T extends CacheableSecurityComponent> T get(Class<T> type,
-            String policyName, String key) {
-        return (T) cache.get(generateKey(type, policyName, key));
+    public static <T extends SecurityComponent> T
+            get(Class<T> type, String componentPath) {
+        return (T) cache.get(componentPath);
     }
 
     /**
@@ -32,16 +30,8 @@ public class ComponentCache {
      *
      * @param component
      */
-    public static void put(CacheableSecurityComponent component) {
-        final String key = generateKey(
-                component.getClass(),
-                component.getPolicyName(),
-                component.cacheKey());
-        cache.put(key, component);
+    public static void put(SecurityComponent component) {
+        cache.put(component.getPath(), component);
     }
 
-    private static <T extends CacheableSecurityComponent> String
-            generateKey(Class<T> type, String policyName, String key) {
-        return type.getName() + KEY_SEPARATOR + policyName + KEY_SEPARATOR + key;
-    }
 }

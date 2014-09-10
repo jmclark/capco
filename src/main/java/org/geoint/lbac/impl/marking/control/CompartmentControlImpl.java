@@ -1,25 +1,22 @@
 package org.geoint.lbac.impl.marking.control;
 
-import org.geoint.lbac.impl.ComponentCache;
-import org.geoint.lbac.impl.marking.CacheableSecurityComponent;
 import org.geoint.lbac.marking.control.Compartment;
+import org.geoint.lbac.marking.control.SecurityControl;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 
 /**
  *
  */
 public class CompartmentControlImpl
-        implements Compartment, CacheableSecurityComponent {
+        implements Compartment {
 
     private final String portion;
     private final String banner;
-    private final SubCompartment[] subcompartments;
+    private final SecurityControl[] subcompartments;
     private final CompartmentControlPolicy policy;
-    private final String cacheKey;
 
-    private CompartmentControlImpl(String cacheKey, CompartmentControlPolicy policy,
-            String portion, String banner, SubCompartment... subcompartments) {
-        this.cacheKey = cacheKey;
+    private CompartmentControlImpl(CompartmentControlPolicy policy,
+            String portion, String banner, SecurityControl... subcompartments) {
         this.policy = policy;
         this.portion = portion;
         this.banner = banner;
@@ -27,24 +24,18 @@ public class CompartmentControlImpl
     }
 
     public static CompartmentControlImpl instance(CompartmentControlPolicy policy,
-            String portion, String banner, SubCompartment... subcompartments) {
-        final String cacheKey = generateKey(policy, portion);
-        CompartmentControlImpl cached = ComponentCache.get(
-                CompartmentControlImpl.class, policy.getPolicyName(), cacheKey);
-        if (cached == null) {
-            cached = new CompartmentControlImpl(cacheKey, policy, portion,
-                    banner, subcompartments);
-            ComponentCache.put(cached);
-        }
-        return cached;
-    }
-
-    private static String generateKey(CompartmentControlPolicy policy, String portion) {
-        return policy.getCategory() + ":" + portion;
+            String portion, String banner, SecurityControl... subcompartments) {
+        return new CompartmentControlImpl(policy, portion,
+                banner, subcompartments);
     }
 
     @Override
-    public SubCompartment[] getSubCompartments() {
+    public String getPath() {
+        return policy.getPath();
+    }
+
+    @Override
+    public SecurityControl[] getSubCompartments() {
         return subcompartments;
     }
 
@@ -68,16 +59,6 @@ public class CompartmentControlImpl
     @Override
     public String getBanner() {
         return banner;
-    }
-
-    @Override
-    public String cacheKey() {
-        return cacheKey;
-    }
-
-    @Override
-    public String getPolicyName() {
-        return policy.getPolicyName();
     }
 
 }

@@ -1,12 +1,13 @@
 package org.geoint.lbac.policy;
 
+import org.geoint.lbac.marking.SecurityCategory;
 import org.geoint.lbac.marking.SecurityLabel;
 import org.geoint.lbac.marking.SecurityMarking;
 
 /**
  * Policy setting for a SecurityMarking category.
  */
-public interface CategoryPolicy {
+public interface CategoryPolicy extends SecurityComponentPolicy {
 
     /**
      * Returns the name of the category.
@@ -15,13 +16,6 @@ public interface CategoryPolicy {
      */
     String getCategoryName();
 
-    /**
-     * Return the name of the containing policy.
-     * 
-     * @return 
-     */
-    String getPolicyName();
-    
     /**
      * Returns the optional category formatter to apply to the
      * {@link SecurityMarking} while rendering
@@ -71,5 +65,11 @@ public interface CategoryPolicy {
      * @return
      */
     SecurityLabel getOverflowLabel();
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    SecurityCategory getComponent();
+
 }

@@ -7,9 +7,9 @@ public class SubCompartmentPolicy extends StandardControlPolicyImpl {
 
     private final String compartmentPortion;
 
-    public SubCompartmentPolicy(String policyName, String categoryName,
+    public SubCompartmentPolicy(String parentPath,
             String portion, String banner, String compartmentPortion) {
-        super(policyName, categoryName, portion, banner);
+        super(parentPath, portion, banner);
         this.compartmentPortion = compartmentPortion;
     }
 

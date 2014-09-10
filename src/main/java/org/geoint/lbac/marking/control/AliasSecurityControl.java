@@ -1,5 +1,7 @@
 package org.geoint.lbac.marking.control;
 
+import org.geoint.lbac.policy.control.AliasControlPolicy;
+
 /**
  * An control which has a potential third token.
  *
@@ -8,6 +10,14 @@ package org.geoint.lbac.marking.control;
  * in the US security marking.
  */
 public interface AliasSecurityControl extends SecurityControl {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     */
+    @Override
+    public AliasControlPolicy getPolicy();
 
     /**
      * Return the alias.

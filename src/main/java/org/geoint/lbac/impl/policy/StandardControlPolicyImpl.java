@@ -1,22 +1,24 @@
 package org.geoint.lbac.impl.policy;
 
+import org.geoint.lbac.impl.ComponentCache;
+import org.geoint.lbac.impl.marking.control.StandardSecurityControlImpl;
 import org.geoint.lbac.policy.control.SecurityControlPolicy;
-import java.util.Objects;
 
 /**
  *
  */
-public class StandardControlPolicyImpl implements SecurityControlPolicy {
+public class StandardControlPolicyImpl
+        implements SecurityControlPolicy {
 
+    private final String componentPath;
     private final String policyName;
-    private final String categoryName;
     private final String portion;
     private final String banner;
 
-    public StandardControlPolicyImpl(String policyName, String categoryName,
+    public StandardControlPolicyImpl(String policyName, String componentPath,
             String portion, String banner) {
         this.policyName = policyName;
-        this.categoryName = categoryName;
+        this.componentPath = componentPath;
         this.portion = portion;
         this.banner = banner;
     }
@@ -27,8 +29,8 @@ public class StandardControlPolicyImpl implements SecurityControlPolicy {
     }
 
     @Override
-    public String getCategory() {
-        return categoryName;
+    public String getPath() {
+        return componentPath;
     }
 
     @Override
@@ -47,33 +49,15 @@ public class StandardControlPolicyImpl implements SecurityControlPolicy {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + Objects.hashCode(this.policyName);
-        hash = 23 * hash + Objects.hashCode(this.categoryName);
-        hash = 23 * hash + Objects.hashCode(this.portion);
-        return hash;
-    }
+    public StandardSecurityControlImpl getComponent() {
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+        StandardSecurityControlImpl ctl
+                = ComponentCache.get(StandardSecurityControlImpl, componentPath);
+        if (ctl == null) {
+            ctl = StandardSecurityControlImpl.instance(this);
+            ComponentCache.put(ctl);
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final StandardControlPolicyImpl other = (StandardControlPolicyImpl) obj;
-        if (!Objects.equals(this.policyName, other.policyName)) {
-            return false;
-        }
-        if (!Objects.equals(this.categoryName, other.categoryName)) {
-            return false;
-        }
-        if (!Objects.equals(this.portion, other.portion)) {
-            return false;
-        }
-        return true;
+        return ctl;
     }
 
 }

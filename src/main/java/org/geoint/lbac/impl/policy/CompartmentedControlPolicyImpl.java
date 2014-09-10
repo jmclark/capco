@@ -23,19 +23,19 @@ public class CompartmentedControlPolicyImpl extends StandardControlPolicyImpl
      * @param banner
      * @param compartments
      */
-    public CompartmentedControlPolicyImpl(String policyName, String categoryName,
+    public CompartmentedControlPolicyImpl(String parentPath,
             String portion, String banner,
             CompartmentControlPolicyImpl... compartments) {
-        super(policyName, categoryName, portion, banner);
+        super(parentPath, portion, banner);
         this.format = new CompartmentedControlFormat();
         this.compartments = compartments;
     }
 
-    public CompartmentedControlPolicyImpl(String policyName, String categoryName,
+    public CompartmentedControlPolicyImpl(String parentPath,
             String portion, String banner,
             CompartmentedControlFormat format,
             CompartmentControlPolicyImpl... compartments) {
-        super(policyName, categoryName, portion, banner);
+        super(parentPath, portion, banner);
         this.format = format;
         this.compartments = compartments;
     }

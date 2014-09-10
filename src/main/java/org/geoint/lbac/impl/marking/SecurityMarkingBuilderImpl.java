@@ -14,6 +14,7 @@ import org.geoint.lbac.marking.UnknownSecurityComponentException;
 import org.geoint.lbac.marking.control.SecurityControl;
 import org.geoint.lbac.policy.CategoryPolicy;
 import org.geoint.lbac.policy.NestedCategoryPolicy;
+import org.geoint.lbac.policy.SecurityComponentPolicy;
 import org.geoint.lbac.policy.SimpleCategoryPolicy;
 import org.geoint.lbac.policy.control.SecurityControlPolicy;
 
@@ -30,24 +31,26 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     }
 
     @Override
-    public SecurityMarkingBuilder addControl(String category, String control)
+    public SecurityMarkingBuilder addComponent(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         AddComponentCommand cmd = new AddComponentCommand(currentMarking,
-                getControlPolicy(category, control).getControl());
+                getComponent(componentPath));
         return apply(cmd);
     }
 
     @Override
-    public SecurityMarkingBuilder addControl(SecurityControl ctl)
+    public SecurityMarkingBuilder addComponent(SecurityComponent ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         if (!ctl.getPolicy().equals(policy)) {
-            ctl = getControlPolicy(ctl.getPolicy().getCategory(), ctl.getPortion()).getControl();
+            ctl = getControlPolicy(ctl.getPolicy().getComponent())
+            , ctl.getPortion()
+            ).getControl();
         }
         return apply(new AddComponentCommand(currentMarking, ctl));
     }
 
     @Override
-    public SecurityMarkingBuilder removeControl(String category, String control)
+    public SecurityMarkingBuilder removeComponent(String category, String control)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         RemoveComponentCommand cmd = new RemoveComponentCommand(currentMarking,
                 getControlPolicy(category, control).getControl());
@@ -55,7 +58,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     }
 
     @Override
-    public SecurityMarkingBuilder removeControl(SecurityControl ctl)
+    public SecurityMarkingBuilder removeComponent(SecurityControl ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         if (!ctl.getPolicy().equals(policy)) {
             ctl = getControlPolicy(ctl.getPolicy().getCategory(), ctl.getPortion()).getControl();
@@ -72,7 +75,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      * @param component
      */
     public void doAdd(SecurityComponent component) {
-        
+
     }
 
     /**
@@ -112,7 +115,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     }
 
     /**
-     * Returns the SecurityControlPolicy or throws and
+     * Returns the SecurityComponent or throws and
      * UnknownSecurityComponentException if the control isn't found.
      *
      * @param category
@@ -120,46 +123,21 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      * @return
      * @throws UnknownSecurityComponentException
      */
-    private SecurityControlPolicy getControlPolicy(String category, String control)
+    private SecurityComponent getComponent(String componentPath)
             throws UnknownSecurityComponentException {
 
-        CategoryPolicy cat = policy.getCategory(category);
-        if (cat == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Unknown marking category '")
-                    .append(category)
-                    .append("'.  Unable to retrieve control '")
-                    .append(control)
-                    .append("'.");
-            throw new UnknownSecurityComponentException(policy, category,
-                    control, sb.toString());
+        final String[] pathParts = componentPath.split(SecurityComponent.PATH_SEPARATOR);
+
+        //ensure the policy for this component is valid
+        if (!pathParts[0].contentEquals(policy.getName())) {
+            throw new UnknownSecurityComponentException(policy,
+                    componentPath, componentPath, "Invalid policy.");
         }
 
-        if (cat instanceof NestedCategoryPolicy) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Category '")
-                    .append(category)
-                    .append("' does not directly contain controls.");
-            throw new UnknownSecurityComponentException(policy, category,
-                    control, sb.toString());
-        }
-
-        SecurityControlPolicy conPolicy = ((SimpleCategoryPolicy) cat)
-                .getControlPolicy(control);
-        if (conPolicy == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Unknown security control value '")
-                    .append(control)
-                    .append("' for category '")
-                    .append(category)
-                    .append("' in policy '")
-                    .append(policy.getName())
-                    .append("'.");
-            throw new UnknownSecurityComponentException(policy, category,
-                    control, sb.toString());
-        }
-
-        return conPolicy;
+        SecurityComponentPolicy componentPolicy = 
+                policy.getComponentPolicy(componentPath);
+        
+        return componentPolicy.getComponent();
     }
 
     /**

@@ -7,8 +7,10 @@ import org.geoint.lbac.impl.policy.restriction.SecurityRestriction;
 import org.geoint.lbac.marking.InvalidSecurityMarkingException;
 import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.SecurityMarkingBuilder;
+import org.geoint.lbac.marking.UnknownSecurityComponentException;
 import org.geoint.lbac.policy.CategoryPolicy;
 import org.geoint.lbac.policy.NestedCategoryPolicy;
+import org.geoint.lbac.policy.SecurityComponentPolicy;
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.policy.SimpleCategoryPolicy;
 
@@ -21,7 +23,7 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     private final SecurityRestriction[] restrictions;
     private final Map<String, CategoryPolicy> categories;
 
-    public SecurityPolicyImpl(String name, CategoryPolicy[] categories, 
+    public SecurityPolicyImpl(String name, CategoryPolicy[] categories,
             SecurityRestriction[] restrictions) {
         this.name = name;
         this.restrictions = restrictions;
@@ -50,6 +52,11 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     @Override
     public CategoryPolicy getCategory(String categoryName) {
         return categories.get(categoryName);
+    }
+
+    public SecurityComponentPolicy getComponentPolicy(String componentPath)
+            throws UnknownSecurityComponentException {
+
     }
 
     @Override
@@ -102,4 +109,5 @@ public class SecurityPolicyImpl implements SecurityPolicy {
     public SecurityRestriction[] getRestrictions() {
         return restrictions;
     }
+
 }

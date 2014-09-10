@@ -36,6 +36,11 @@ public class SimpleSecurityCategory extends AbstractSecurityCategory {
     }
 
     @Override
+    public String getPath() {
+        return policy.getPath();
+    }
+
+    @Override
     public String getPortion() {
         if (cachedPortion == null) {
             cachedPortion = stringify(true);
