@@ -2,6 +2,7 @@ package org.geoint.lbac.marking;
 
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.impl.policy.restriction.SecurityRestrictionException;
+import org.geoint.lbac.marking.control.SecurityControl;
 
 /**
  * API to create, or modify, a {@link SecurityMarking}.
@@ -24,11 +25,11 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder addComponent(String componentPath)
+    SecurityMarkingBuilder addControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Attempts to add a {@link SecurityComponent} to the {@link SecurityMarking}.
+     * Attempts to add a {@link SecurityControl} to the {@link SecurityMarking}.
      *
      * The {@link SecurityPolicy} is first checked for any restrictions that may
      * morph the action taken by adding this control (based on those
@@ -42,16 +43,16 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder addComponent(SecurityComponent component)
+    SecurityMarkingBuilder addControl(SecurityControl component)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Removes a {@link SecurityComponent} to a category within the
+     * Removes a {@link SecurityControl} to a category within the
      * {@link SecurityMarking}, first checking policy restrictions.
      *
      * This method if functionally equivalent to retrieving the control instance
      * from the {@link SecurityPolicy} and calling 
-     * {@link SecurityMarkingBuilder#removeControl(SecurityComponent) }
+     * {@link SecurityMarkingBuilder#removeControl(SecurityControl) }
      *
      * @param componentPath
      * @return
@@ -60,11 +61,11 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder removeComponent(String componentPath)
+    SecurityMarkingBuilder removeControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Attempts to remove a {@link SecurityComponent} from the
+     * Attempts to remove a {@link SecurityControl} from the
      * {@link SecurityMarking}.
      *
      * The {@link SecurityPolicy} is first checked for any restrictions that may
@@ -79,7 +80,7 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder removeComponent(SecurityComponent component)
+    SecurityMarkingBuilder removeControl(SecurityControl component)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
 }

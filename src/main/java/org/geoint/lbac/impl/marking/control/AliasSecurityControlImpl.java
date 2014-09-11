@@ -6,7 +6,7 @@ import org.geoint.lbac.policy.control.AliasControlPolicy;
 /**
  *
  */
-public class AliasSecurityControlImpl extends StandardSecurityControlImpl
+public class AliasSecurityControlImpl extends StandardSecurityControlImpl<AliasControlPolicy>
         implements AliasSecurityControl {
 
     private AliasSecurityControlImpl(AliasControlPolicy policy) {
@@ -22,8 +22,4 @@ public class AliasSecurityControlImpl extends StandardSecurityControlImpl
         return getPolicy().getAlias();
     }
 
-    @Override
-    public AliasControlPolicy getPolicy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

@@ -18,24 +18,24 @@ public class CompartmentedControlPolicyImpl extends StandardControlPolicyImpl
      * Uses default formatting.
      *
      * @param policyName
-     * @param categoryName
+     * @param componentPath
      * @param portion
      * @param banner
      * @param compartments
      */
-    public CompartmentedControlPolicyImpl(String parentPath,
-            String portion, String banner,
+    public CompartmentedControlPolicyImpl(String policyName, String componentPath,
+            String portion, String banner, 
             CompartmentControlPolicyImpl... compartments) {
-        super(parentPath, portion, banner);
+        super(policyName, componentPath, portion, banner);
         this.format = new CompartmentedControlFormat();
         this.compartments = compartments;
     }
 
-    public CompartmentedControlPolicyImpl(String parentPath,
+    public CompartmentedControlPolicyImpl(String policyName, String componentPath,
             String portion, String banner,
             CompartmentedControlFormat format,
             CompartmentControlPolicyImpl... compartments) {
-        super(parentPath, portion, banner);
+        super(policyName, componentPath, portion, banner);
         this.format = format;
         this.compartments = compartments;
     }

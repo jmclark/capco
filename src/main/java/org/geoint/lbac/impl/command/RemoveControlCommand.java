@@ -3,17 +3,18 @@ package org.geoint.lbac.impl.command;
 import org.geoint.lbac.impl.marking.SecurityMarkingBuilderImpl;
 import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.marking.SecurityMarking;
+import org.geoint.lbac.marking.control.SecurityControl;
 
 /**
  * Removes a {@link SecurityComponent}.
  */
-public class RemoveComponentCommand implements MarkingChangeCommand {
+public class RemoveControlCommand implements MarkingChangeCommand {
 
     private final SecurityMarking context;
-    private final SecurityComponent component;
+    private final SecurityControl component;
 
-    public RemoveComponentCommand(SecurityMarking context,
-            SecurityComponent component) {
+    public RemoveControlCommand(SecurityMarking context,
+            SecurityControl component) {
         this.context = context;
         this.component = component;
     }

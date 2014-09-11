@@ -7,13 +7,15 @@ import org.geoint.lbac.policy.control.SecurityControlPolicy;
 /**
  * Simple security control which provides nothing more than a holder for the
  * portion/banner tokens.
+ * 
+ * @param <P>
  */
-public class StandardSecurityControlImpl
+public class StandardSecurityControlImpl<P extends SecurityControlPolicy>
     implements SecurityControl {
 
-    private final SecurityControlPolicy policy;
+    private final P policy;
 
-    protected StandardSecurityControlImpl(SecurityControlPolicy policy) {
+    protected StandardSecurityControlImpl(P policy) {
         this.policy = policy;
     }
 
@@ -28,7 +30,7 @@ public class StandardSecurityControlImpl
     }
 
     @Override
-    public SecurityControlPolicy getPolicy() {
+    public P getPolicy() {
         return policy;
     }
 

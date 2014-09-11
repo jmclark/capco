@@ -1,9 +1,10 @@
 package org.geoint.lbac.impl.marking;
 
-import org.geoint.lbac.impl.command.AddComponentCommand;
+import java.util.Map;
+import org.geoint.lbac.impl.command.AddControlCommand;
 import org.geoint.lbac.impl.command.CommandExecutionException;
 import org.geoint.lbac.impl.command.MarkingChangeCommand;
-import org.geoint.lbac.impl.command.RemoveComponentCommand;
+import org.geoint.lbac.impl.command.RemoveControlCommand;
 import org.geoint.lbac.impl.policy.SecurityPolicyImpl;
 import org.geoint.lbac.impl.policy.restriction.SecurityRestriction;
 import org.geoint.lbac.impl.policy.restriction.SecurityRestrictionException;
@@ -12,11 +13,7 @@ import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.SecurityMarkingBuilder;
 import org.geoint.lbac.marking.UnknownSecurityComponentException;
 import org.geoint.lbac.marking.control.SecurityControl;
-import org.geoint.lbac.policy.CategoryPolicy;
-import org.geoint.lbac.policy.NestedCategoryPolicy;
 import org.geoint.lbac.policy.SecurityComponentPolicy;
-import org.geoint.lbac.policy.SimpleCategoryPolicy;
-import org.geoint.lbac.policy.control.SecurityControlPolicy;
 
 /**
  *
@@ -24,6 +21,7 @@ import org.geoint.lbac.policy.control.SecurityControlPolicy;
 public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
     private SecurityMarking currentMarking;
+    private Map<String, SecurityControl> currentControls;
     private final SecurityPolicyImpl policy;
 
     public SecurityMarkingBuilderImpl(SecurityPolicyImpl policy) {
@@ -31,39 +29,55 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     }
 
     @Override
-    public SecurityMarkingBuilder addComponent(String componentPath)
+    public SecurityMarkingBuilder addControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
-        AddComponentCommand cmd = new AddComponentCommand(currentMarking,
-                getComponent(componentPath));
+        SecurityComponent cmp = getComponent(componentPath);
+        if (!(cmp instanceof SecurityControl)) {
+            return this;
+        }
+        AddControlCommand cmd = new AddControlCommand(currentMarking,
+                (SecurityControl) cmp);
         return apply(cmd);
     }
 
     @Override
-    public SecurityMarkingBuilder addComponent(SecurityComponent ctl)
+    public SecurityMarkingBuilder addControl(SecurityControl ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
-        if (!ctl.getPolicy().equals(policy)) {
-            ctl = getControlPolicy(ctl.getPolicy().getComponent())
-            , ctl.getPortion()
-            ).getControl();
-        }
-        return apply(new AddComponentCommand(currentMarking, ctl));
+
+        return apply(new AddControlCommand(currentMarking, normalize(ctl)));
     }
 
     @Override
-    public SecurityMarkingBuilder removeComponent(String category, String control)
+    public SecurityMarkingBuilder removeControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
-        RemoveComponentCommand cmd = new RemoveComponentCommand(currentMarking,
-                getControlPolicy(category, control).getControl());
+        SecurityComponent cmp = getComponent(componentPath);
+        if (!(cmp instanceof SecurityControl)) {
+            return this;
+        }
+        RemoveControlCommand cmd = new RemoveControlCommand(currentMarking,
+                (SecurityControl) cmp);
         return apply(cmd);
     }
 
     @Override
-    public SecurityMarkingBuilder removeComponent(SecurityControl ctl)
+    public SecurityMarkingBuilder removeControl(SecurityControl ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
+
+        return apply(new RemoveControlCommand(currentMarking, normalize(ctl)));
+    }
+
+    private <C extends SecurityComponent> C normalize(C ctl)
+            throws UnknownSecurityComponentException {
+
         if (!ctl.getPolicy().equals(policy)) {
-            ctl = getControlPolicy(ctl.getPolicy().getCategory(), ctl.getPortion()).getControl();
+            SecurityComponent cmp = getComponent(ctl.getPath());
+            if (cmp == null) {
+                throw new UnknownSecurityComponentException(policy,
+                        ctl.getPath(), ctl.getPortion(), "Invalid policy and "
+                        + "cannot component to policy.");
+            }
         }
-        return apply(new RemoveComponentCommand(currentMarking, ctl));
+        return ctl;
     }
 
     /**
@@ -72,10 +86,11 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      * This method adds a {@link SecurityComponent} without running restriction
      * checks.
      *
-     * @param component
+     * @param control
      */
-    public void doAdd(SecurityComponent component) {
-
+    public void doAdd(SecurityControl control) {
+        currentControls.put(control.getPath(), control);
+        currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
     }
 
     /**
@@ -84,10 +99,11 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      * This method removes a {@link SecurityComponent} without running
      * restriction checks.
      *
-     * @param component
+     * @param control
      */
-    public void doRemove(SecurityComponent component) {
-
+    public void doRemove(SecurityControl control) {
+        currentControls.remove(control.getPath());
+        currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
     }
 
     /**
@@ -130,13 +146,20 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
         //ensure the policy for this component is valid
         if (!pathParts[0].contentEquals(policy.getName())) {
+            //attempt to see if there is such a control in this policy
+            String[] oldPath = componentPath.split(SecurityComponent.PATH_SEPARATOR);
+            oldPath[0] = policy.getName();
+            componentPath = join(oldPath, SecurityComponent.PATH_SEPARATOR);
+        }
+
+        SecurityComponentPolicy componentPolicy
+                = policy.getComponentPolicy(componentPath);
+
+        if (componentPolicy == null) {
             throw new UnknownSecurityComponentException(policy,
                     componentPath, componentPath, "Invalid policy.");
         }
 
-        SecurityComponentPolicy componentPolicy = 
-                policy.getComponentPolicy(componentPath);
-        
         return componentPolicy.getComponent();
     }
 
@@ -177,5 +200,16 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
             throw ex;
         }
         return this;
+    }
+
+    private String join(String[] s, String glue) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length; i++) {
+            sb.append(s);
+            if (i < s.length) {
+                sb.append(glue);
+            }
+        }
+        return sb.toString();
     }
 }

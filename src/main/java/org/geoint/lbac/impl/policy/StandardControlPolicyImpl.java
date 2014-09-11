@@ -2,6 +2,7 @@ package org.geoint.lbac.impl.policy;
 
 import org.geoint.lbac.impl.ComponentCache;
 import org.geoint.lbac.impl.marking.control.StandardSecurityControlImpl;
+import org.geoint.lbac.marking.control.SecurityControl;
 import org.geoint.lbac.policy.control.SecurityControlPolicy;
 
 /**
@@ -49,10 +50,10 @@ public class StandardControlPolicyImpl
     }
 
     @Override
-    public StandardSecurityControlImpl getComponent() {
+    public SecurityControl getComponent() {
 
         StandardSecurityControlImpl ctl
-                = ComponentCache.get(StandardSecurityControlImpl, componentPath);
+                = ComponentCache.get(StandardSecurityControlImpl.class, componentPath);
         if (ctl == null) {
             ctl = StandardSecurityControlImpl.instance(this);
             ComponentCache.put(ctl);

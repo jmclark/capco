@@ -2,6 +2,7 @@ package org.geoint.lbac.impl.marking.control;
 
 import org.geoint.lbac.marking.control.Compartment;
 import org.geoint.lbac.marking.control.SecurityControl;
+import org.geoint.lbac.policy.SecurityComponentPolicy;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 
 /**
@@ -27,6 +28,11 @@ public class CompartmentControlImpl
             String portion, String banner, SecurityControl... subcompartments) {
         return new CompartmentControlImpl(policy, portion,
                 banner, subcompartments);
+    }
+
+    @Override
+    public CompartmentControlPolicy getPolicy() {
+        return policy;
     }
 
     @Override

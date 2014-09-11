@@ -12,7 +12,7 @@ public interface Labeled {
      *
      * @return
      */
-    String getClassification();
+    String getLabel();
 
     /**
      * Return the {@link LabelAuthority} details for the classified

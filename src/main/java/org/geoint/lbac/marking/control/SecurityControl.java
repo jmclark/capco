@@ -9,6 +9,12 @@ import org.geoint.lbac.policy.control.SecurityControlPolicy;
  */
 public interface SecurityControl extends SecurityComponent {
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @return 
+     */
+    @Override
     SecurityControlPolicy getPolicy();
     
 }

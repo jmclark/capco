@@ -16,10 +16,11 @@ public interface SecurityCategory extends SecurityComponent {
     String getName();
 
     /**
-     * Return the underlying policy for the category.
+     * {@inheritDoc}
      *
      * @return
      */
+    @Override
     CategoryPolicy getPolicy();
 
 
