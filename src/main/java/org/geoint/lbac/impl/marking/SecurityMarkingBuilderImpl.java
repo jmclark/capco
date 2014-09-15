@@ -1,6 +1,5 @@
 package org.geoint.lbac.impl.marking;
 
-import java.util.Map;
 import org.geoint.lbac.impl.command.AddControlCommand;
 import org.geoint.lbac.impl.command.CommandExecutionException;
 import org.geoint.lbac.impl.command.MarkingChangeCommand;
@@ -20,8 +19,8 @@ import org.geoint.lbac.policy.SecurityComponentPolicy;
  */
 public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
-    private SecurityMarking currentMarking;
-    private Map<String, SecurityControl> currentControls;
+    private SecurityMarkingImpl currentMarking;
+//    private Map<String, SecurityControl> currentControls;
     private final SecurityPolicyImpl policy;
 
     public SecurityMarkingBuilderImpl(SecurityPolicyImpl policy) {
@@ -89,8 +88,9 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      * @param control
      */
     public void doAdd(SecurityControl control) {
-        currentControls.put(control.getPath(), control);
-        currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
+//        currentControls.put(control.getPath(), control);
+//        currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
+        currentMarking = currentMarking.mergeWithoutChecks(control);
     }
 
     /**
