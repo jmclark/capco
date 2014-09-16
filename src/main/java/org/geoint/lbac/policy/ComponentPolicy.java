@@ -4,8 +4,9 @@ import org.geoint.lbac.marking.SecurityComponent;
 
 /**
  *
+ * @param <C>
  */
-public interface ComponentPolicy {
+public interface ComponentPolicy<C extends SecurityComponent> {
 
     /**
      * Return the unique hierarchical path of the category.
@@ -24,6 +25,6 @@ public interface ComponentPolicy {
      *
      * @return
      */
-    SecurityComponent getComponent();
+    C getComponent();
 
 }

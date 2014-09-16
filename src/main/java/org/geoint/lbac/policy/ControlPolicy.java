@@ -1,7 +1,7 @@
 package org.geoint.lbac.policy;
 
 import org.geoint.lbac.marking.SecurityLabel;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 
 /**
  * Policy configuration for a SecurityMarking control.

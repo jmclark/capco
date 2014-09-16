@@ -65,15 +65,6 @@ public interface SecurityMarking extends SecurityLabel {
      * 
      * @return 
      */
-    SecurityCategory[] getCategories();
-    
-    /**
-     * Return a specific category by name.
-     * 
-     * @param name
-     * @return the category or null, if not category by this name is availabnle
-     */
-    SecurityCategory getCategory(String name);
-    
+    SecurityComponent[] getComponents();
     
 }

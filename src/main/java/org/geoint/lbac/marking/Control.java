@@ -1,7 +1,5 @@
-package org.geoint.lbac.marking.control;
+package org.geoint.lbac.marking;
 
-import org.geoint.lbac.marking.SecurityCategory;
-import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.policy.ControlPolicy;
 
 /**

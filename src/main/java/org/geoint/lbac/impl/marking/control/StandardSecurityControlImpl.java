@@ -1,7 +1,7 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.ControlPolicy;
 
 /**

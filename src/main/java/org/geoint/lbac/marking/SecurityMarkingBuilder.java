@@ -2,7 +2,6 @@ package org.geoint.lbac.marking;
 
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.impl.policy.restriction.SecurityRestrictionException;
-import org.geoint.lbac.marking.control.Control;
 
 /**
  * API to create, or modify, a {@link SecurityMarking}.

@@ -1,4 +1,4 @@
-package org.geoint.lbac.marking.control;
+package org.geoint.lbac.marking;
 
 /**
  * A Control which has an additional weighting attribute, allowing the

@@ -3,7 +3,7 @@ package org.geoint.lbac.impl.command;
 import org.geoint.lbac.impl.marking.SecurityMarkingBuilderImpl;
 import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.marking.SecurityMarking;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 
 /**
  * Adds a {@link SecurityComponent}.

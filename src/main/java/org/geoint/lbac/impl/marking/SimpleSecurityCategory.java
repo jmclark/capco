@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.SimpleCategoryPolicy;
 
 /**

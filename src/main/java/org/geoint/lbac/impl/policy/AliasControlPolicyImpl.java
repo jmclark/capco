@@ -1,8 +1,8 @@
 package org.geoint.lbac.impl.policy;
 
-import org.geoint.lbac.impl.ComponentCache;
+import org.geoint.lbac.impl.LabelCache;
 import org.geoint.lbac.impl.marking.control.AliasSecurityControlImpl;
-import org.geoint.lbac.marking.control.AliasSecurityControl;
+import org.geoint.lbac.marking.AliasSecurityControl;
 import org.geoint.lbac.policy.AliasControlPolicy;
 
 /**
@@ -14,9 +14,9 @@ public class AliasControlPolicyImpl
 
     private final String alias;
 
-    public AliasControlPolicyImpl(String policyName, String componentPath,
+    public AliasControlPolicyImpl(String componentPath,
             String portion, String banner, String alias) {
-        super(policyName, componentPath, portion, banner);
+        super(componentPath, portion, banner);
         this.alias = alias;
     }
 
@@ -28,10 +28,10 @@ public class AliasControlPolicyImpl
     @Override
     public AliasSecurityControl getComponent() {
         AliasSecurityControlImpl ctl
-                = ComponentCache.get(AliasSecurityControlImpl.class, this.getPath());
+                = LabelCache.get(AliasSecurityControlImpl.class, this.getPath());
         if (ctl == null) {
             ctl = AliasSecurityControlImpl.instance(this);
-            ComponentCache.put(ctl);
+            LabelCache.put(ctl);
         }
         return ctl;
     }

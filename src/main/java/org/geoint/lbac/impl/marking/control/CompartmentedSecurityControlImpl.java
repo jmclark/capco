@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.marking.control.Compartment;
 import org.geoint.lbac.marking.control.CompartmentedSecurityControl;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.control.CompartmentedControlFormat;
 import org.geoint.lbac.policy.control.CompartmentedControlPolicy;
 

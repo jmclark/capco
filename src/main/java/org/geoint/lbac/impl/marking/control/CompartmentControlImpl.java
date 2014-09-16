@@ -1,7 +1,7 @@
 package org.geoint.lbac.impl.marking.control;
 
 import org.geoint.lbac.marking.control.Compartment;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.ComponentPolicy;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 

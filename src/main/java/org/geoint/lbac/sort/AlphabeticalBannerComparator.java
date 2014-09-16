@@ -1,4 +1,4 @@
-package org.geoint.lbac.impl.sort;
+package org.geoint.lbac.sort;
 
 import java.util.Comparator;
 import org.geoint.lbac.marking.SecurityComponent;

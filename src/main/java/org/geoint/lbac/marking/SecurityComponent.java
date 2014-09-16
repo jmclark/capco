@@ -21,5 +21,10 @@ public interface SecurityComponent extends SecurityLabel {
      */
     String getPath();
     
+    /**
+     * Return the policy which defines this component.
+     * 
+     * @return 
+     */
     ComponentPolicy getPolicy();
 }

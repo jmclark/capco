@@ -14,7 +14,7 @@ import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.UnknownSecurityComponentException;
 import org.geoint.lbac.marking.control.Compartment;
 import org.geoint.lbac.marking.control.CompartmentedSecurityControl;
-import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 

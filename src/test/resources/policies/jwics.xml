@@ -2,7 +2,7 @@
 <lbac>
     <policy name="JWICS">
         <marking separator="//">
-            <container name="classification">
+            <container name="Classification">
                 <components>
                     <control portion="U" banner="UNCLASSIFIED">
                         <description></description>
@@ -23,24 +23,24 @@
                     </restrictions>
                 </components>
             </container>
-            <container name="sci" separator="-">
+            <container name="SCI" separator="-">
                 <components>
-                    <container name="hcs" portionPrefix="HCS" bannerPrefix="HCS" separator=" ">
+                    <container name="HCS" portionPrefix="HCS" bannerPrefix="HCS" separator=" ">
                         <restrictions>
                             <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
                         </restrictions>
                     </container>
-                    <container name="si" portionPrefix="SI" bannerPrefix="SI" separator=" ">
+                    <container name="SI" portionPrefix="SI" bannerPrefix="SI" separator=" ">
                         <restrictions>
                             <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
                         </restrictions>
                     </container>
-                    <container name="gamma" portionPrefix="G" bannerPrefix="GAMMA" separator=" ">
+                    <container name="G" portionPrefix="G" bannerPrefix="GAMMA" separator=" ">
                         <restrictions>
                             <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
                         </restrictions>
                     </container>
-                    <container name="tk" portionPrefix="TK" bannerPrefix="TK" separator=" ">
+                    <container name="TK" portionPrefix="TK" bannerPrefix="TK" separator=" ">
                         <restrictions>
                             <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
                         </restrictions>

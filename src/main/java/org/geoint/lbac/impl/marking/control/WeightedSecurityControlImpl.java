@@ -1,6 +1,6 @@
 package org.geoint.lbac.impl.marking.control;
 
-import org.geoint.lbac.marking.control.WeightedSecurityControl;
+import org.geoint.lbac.marking.WeightedSecurityControl;
 import org.geoint.lbac.policy.WeightedControlPolicy;
 
 /**
