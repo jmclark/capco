@@ -1,14 +1,15 @@
-package org.geoint.lbac.policy;
+package org.geoint.lbac.impl.policy;
 
 import org.geoint.lbac.impl.sort.AlphabeticalPortionComparator;
 import org.geoint.lbac.marking.SecurityLabel;
+import org.geoint.lbac.policy.ContainerFormat;
+import org.geoint.lbac.policy.SortOrder;
 
 /**
- * Instructs how to format a security marking category.
+ *
  */
-public class CategoryFormat {
-
-    private final SecurityLabel label;
+public class ContainerFormatImpl implements ContainerFormat {
+private final SecurityLabel label;
     private final SecurityLabel labelSeparator;
     private final SecurityLabel controlSeparator;
     private final SortOrder sortOrder;
@@ -19,7 +20,7 @@ public class CategoryFormat {
     public static final String DEFAULT_CONTROL_PORTION_SEPARATOR = ", ";
     public static final String DEFAULT_CONTROL_BANNER_SEPARATOR = ", ";
 
-    public CategoryFormat() {
+    public ContainerFormatImpl() {
         this.label = new DefaultFormatSecurityLabel(DEFAULT_PORTION_LABEL,
                 DEFAULT_BANNER_LABEL);
         this.labelSeparator
@@ -33,7 +34,7 @@ public class CategoryFormat {
                         new AlphabeticalPortionComparator());
     }
 
-    public CategoryFormat(SecurityLabel label, SecurityLabel labelSeparator,
+    public ContainerFormatImpl(SecurityLabel label, SecurityLabel labelSeparator,
             SecurityLabel separator, SortOrder order) {
         this.label = label;
         this.labelSeparator = labelSeparator;
@@ -41,20 +42,23 @@ public class CategoryFormat {
         this.sortOrder = order;
     }
 
+@Override
     public SecurityLabel getLabel() {
         return label;
     }
 
+@Override
     public SecurityLabel getLabelSeparator() {
         return labelSeparator;
     }
 
+@Override
     public SecurityLabel getControlSeparator() {
         return controlSeparator;
     }
 
+@Override
     public SortOrder getSortOrder() {
         return sortOrder;
     }
-
 }

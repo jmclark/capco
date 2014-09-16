@@ -1,8 +1,8 @@
 package org.geoint.lbac.impl.marking.control;
 
 import java.util.Objects;
-import org.geoint.lbac.marking.control.SecurityControl;
-import org.geoint.lbac.policy.control.SecurityControlPolicy;
+import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.policy.ControlPolicy;
 
 /**
  * Simple security control which provides nothing more than a holder for the
@@ -10,8 +10,8 @@ import org.geoint.lbac.policy.control.SecurityControlPolicy;
  * 
  * @param <P>
  */
-public class StandardSecurityControlImpl<P extends SecurityControlPolicy>
-    implements SecurityControl {
+public class StandardSecurityControlImpl<P extends ControlPolicy>
+    implements Control {
 
     private final P policy;
 
@@ -19,7 +19,7 @@ public class StandardSecurityControlImpl<P extends SecurityControlPolicy>
         this.policy = policy;
     }
 
-    public static StandardSecurityControlImpl instance(SecurityControlPolicy policy) {
+    public static StandardSecurityControlImpl instance(ControlPolicy policy) {
         return new StandardSecurityControlImpl(policy);
 
     }

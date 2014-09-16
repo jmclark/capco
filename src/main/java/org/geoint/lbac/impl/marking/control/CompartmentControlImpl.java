@@ -1,8 +1,8 @@
 package org.geoint.lbac.impl.marking.control;
 
 import org.geoint.lbac.marking.control.Compartment;
-import org.geoint.lbac.marking.control.SecurityControl;
-import org.geoint.lbac.policy.SecurityComponentPolicy;
+import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.policy.ComponentPolicy;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 
 /**
@@ -13,11 +13,11 @@ public class CompartmentControlImpl
 
     private final String portion;
     private final String banner;
-    private final SecurityControl[] subcompartments;
+    private final Control[] subcompartments;
     private final CompartmentControlPolicy policy;
 
     private CompartmentControlImpl(CompartmentControlPolicy policy,
-            String portion, String banner, SecurityControl... subcompartments) {
+            String portion, String banner, Control... subcompartments) {
         this.policy = policy;
         this.portion = portion;
         this.banner = banner;
@@ -25,7 +25,7 @@ public class CompartmentControlImpl
     }
 
     public static CompartmentControlImpl instance(CompartmentControlPolicy policy,
-            String portion, String banner, SecurityControl... subcompartments) {
+            String portion, String banner, Control... subcompartments) {
         return new CompartmentControlImpl(policy, portion,
                 banner, subcompartments);
     }
@@ -41,7 +41,7 @@ public class CompartmentControlImpl
     }
 
     @Override
-    public SecurityControl[] getSubCompartments() {
+    public Control[] getSubCompartments() {
         return subcompartments;
     }
 

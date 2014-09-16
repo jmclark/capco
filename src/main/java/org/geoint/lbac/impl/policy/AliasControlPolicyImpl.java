@@ -3,7 +3,7 @@ package org.geoint.lbac.impl.policy;
 import org.geoint.lbac.impl.ComponentCache;
 import org.geoint.lbac.impl.marking.control.AliasSecurityControlImpl;
 import org.geoint.lbac.marking.control.AliasSecurityControl;
-import org.geoint.lbac.policy.control.AliasControlPolicy;
+import org.geoint.lbac.policy.AliasControlPolicy;
 
 /**
  *

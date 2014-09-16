@@ -11,8 +11,8 @@ import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.SecurityMarkingBuilder;
 import org.geoint.lbac.marking.UnknownSecurityComponentException;
-import org.geoint.lbac.marking.control.SecurityControl;
-import org.geoint.lbac.policy.SecurityComponentPolicy;
+import org.geoint.lbac.marking.control.Control;
+import org.geoint.lbac.policy.ComponentPolicy;
 
 /**
  *
@@ -20,7 +20,7 @@ import org.geoint.lbac.policy.SecurityComponentPolicy;
 public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
 
     private SecurityMarkingImpl currentMarking;
-//    private Map<String, SecurityControl> currentControls;
+//    private Map<String, Control> currentControls;
     private final SecurityPolicyImpl policy;
 
     public SecurityMarkingBuilderImpl(SecurityPolicyImpl policy) {
@@ -31,16 +31,16 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     public SecurityMarkingBuilder addControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         SecurityComponent cmp = getComponent(componentPath);
-        if (!(cmp instanceof SecurityControl)) {
+        if (!(cmp instanceof Control)) {
             return this;
         }
         AddControlCommand cmd = new AddControlCommand(currentMarking,
-                (SecurityControl) cmp);
+                (Control) cmp);
         return apply(cmd);
     }
 
     @Override
-    public SecurityMarkingBuilder addControl(SecurityControl ctl)
+    public SecurityMarkingBuilder addControl(Control ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
 
         return apply(new AddControlCommand(currentMarking, normalize(ctl)));
@@ -50,16 +50,16 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
     public SecurityMarkingBuilder removeControl(String componentPath)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
         SecurityComponent cmp = getComponent(componentPath);
-        if (!(cmp instanceof SecurityControl)) {
+        if (!(cmp instanceof Control)) {
             return this;
         }
         RemoveControlCommand cmd = new RemoveControlCommand(currentMarking,
-                (SecurityControl) cmp);
+                (Control) cmp);
         return apply(cmd);
     }
 
     @Override
-    public SecurityMarkingBuilder removeControl(SecurityControl ctl)
+    public SecurityMarkingBuilder removeControl(Control ctl)
             throws UnknownSecurityComponentException, SecurityRestrictionException {
 
         return apply(new RemoveControlCommand(currentMarking, normalize(ctl)));
@@ -87,7 +87,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      *
      * @param control
      */
-    public void doAdd(SecurityControl control) {
+    public void doAdd(Control control) {
 //        currentControls.put(control.getPath(), control);
 //        currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
         currentMarking = currentMarking.mergeWithoutChecks(control);
@@ -101,7 +101,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
      *
      * @param control
      */
-    public void doRemove(SecurityControl control) {
+    public void doRemove(Control control) {
         currentControls.remove(control.getPath());
         currentMarking = SecurityMarkingImpl.generate(policy, currentControls);
     }
@@ -152,7 +152,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
             componentPath = join(oldPath, SecurityComponent.PATH_SEPARATOR);
         }
 
-        SecurityComponentPolicy componentPolicy
+        ComponentPolicy componentPolicy
                 = policy.getComponentPolicy(componentPath);
 
         if (componentPolicy == null) {

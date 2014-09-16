@@ -4,9 +4,8 @@ import org.geoint.lbac.marking.SecurityComponent;
 
 /**
  *
- * @param <C>
  */
-public interface SecurityComponentPolicy {
+public interface ComponentPolicy {
 
     /**
      * Return the unique hierarchical path of the category.
@@ -21,14 +20,7 @@ public interface SecurityComponentPolicy {
     String getPath();
 
     /**
-     * Return the name of the containing policy.
-     *
-     * @return
-     */
-    String getPolicyName();
-
-    /**
-     * Returns a new instance of the control
+     * Returns an instance of the component.
      *
      * @return
      */

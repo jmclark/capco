@@ -1,7 +1,7 @@
 package org.geoint.lbac.marking.control;
 
 /**
- * SecurityControl which provides compartmentalized (need-to-know) controls.
+ * Control which provides compartmentalized (need-to-know) controls.
  *
  * A compartmentalized component is one that may contain one or more security
  * compartments, which may be further compartmentalized. Access to
@@ -9,7 +9,7 @@ package org.geoint.lbac.marking.control;
  *
  */
 public interface CompartmentedSecurityControl
-        extends SecurityControl {
+        extends Control {
 
     Compartment[] getCompartments();
 }

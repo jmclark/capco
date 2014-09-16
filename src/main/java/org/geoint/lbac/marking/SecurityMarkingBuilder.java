@@ -2,7 +2,7 @@ package org.geoint.lbac.marking;
 
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.impl.policy.restriction.SecurityRestrictionException;
-import org.geoint.lbac.marking.control.SecurityControl;
+import org.geoint.lbac.marking.control.Control;
 
 /**
  * API to create, or modify, a {@link SecurityMarking}.
@@ -29,7 +29,7 @@ public interface SecurityMarkingBuilder {
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Attempts to add a {@link SecurityControl} to the {@link SecurityMarking}.
+     * Attempts to add a {@link Control} to the {@link SecurityMarking}.
      *
      * The {@link SecurityPolicy} is first checked for any restrictions that may
      * morph the action taken by adding this control (based on those
@@ -43,11 +43,11 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder addControl(SecurityControl component)
+    SecurityMarkingBuilder addControl(Control component)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Removes a {@link SecurityControl} to a category within the
+     * Removes a {@link Control} to a category within the
      * {@link SecurityMarking}, first checking policy restrictions.
      *
      * This method if functionally equivalent to retrieving the control instance
@@ -65,7 +65,7 @@ public interface SecurityMarkingBuilder {
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
     /**
-     * Attempts to remove a {@link SecurityControl} from the
+     * Attempts to remove a {@link Control} from the
      * {@link SecurityMarking}.
      *
      * The {@link SecurityPolicy} is first checked for any restrictions that may
@@ -80,7 +80,7 @@ public interface SecurityMarkingBuilder {
      * @throws SecurityRestrictionException if a restriction prevents this
      * action from happening
      */
-    SecurityMarkingBuilder removeControl(SecurityControl component)
+    SecurityMarkingBuilder removeControl(Control component)
             throws UnknownSecurityComponentException, SecurityRestrictionException;
 
 }

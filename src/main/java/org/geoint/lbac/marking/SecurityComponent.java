@@ -1,6 +1,6 @@
 package org.geoint.lbac.marking;
 
-import org.geoint.lbac.policy.SecurityComponentPolicy;
+import org.geoint.lbac.policy.ComponentPolicy;
 
 /**
  * A component of a {@link SecurityMarking}.
@@ -21,5 +21,5 @@ public interface SecurityComponent extends SecurityLabel {
      */
     String getPath();
     
-    SecurityComponentPolicy getPolicy();
+    ComponentPolicy getPolicy();
 }

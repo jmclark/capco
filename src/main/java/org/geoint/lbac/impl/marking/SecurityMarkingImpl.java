@@ -14,7 +14,7 @@ import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.UnknownSecurityComponentException;
 import org.geoint.lbac.marking.control.Compartment;
 import org.geoint.lbac.marking.control.CompartmentedSecurityControl;
-import org.geoint.lbac.marking.control.SecurityControl;
+import org.geoint.lbac.marking.control.Control;
 import org.geoint.lbac.policy.SecurityPolicy;
 import org.geoint.lbac.policy.control.CompartmentControlPolicy;
 
@@ -38,7 +38,7 @@ public class SecurityMarkingImpl implements SecurityMarking {
     }
 
     public static SecurityMarking generate(SecurityPolicyImpl policy,
-            SecurityControl... newControls) {
+            Control... newControls) {
         //all components to reduce iterations, we'll just return the root categories 
         //when we're done
         Map<String, SecurityComponent> components = new HashMap<>();
@@ -47,20 +47,21 @@ public class SecurityMarkingImpl implements SecurityMarking {
 
     private static SecurityMarking generate(SecurityPolicyImpl policy,
             Map<String, SecurityCategory> categories,
-            SecurityControl... controls) throws UnknownSecurityComponentException {
+            Control... controls) throws UnknownSecurityComponentException {
         StringBuilder portion = new StringBuilder();
         StringBuilder banner = new StringBuilder();
 
         //aggregate the controls approperiatly
-        for (SecurityControl c : controls) {
+        for (Control c : controls) {
 
             String[] path = c.getPath().split(SecurityComponent.PATH_SEPARATOR);
 
-            //iterate over the path, attempting to find the last component
-            //(a container or the control itself) is available
+            //iterate over the path, creating containing components if they 
+            //do not already exist
             //TODO try this in reverse order for optimization
             StringBuilder componentPath = new StringBuilder(path[0]); //skip policy itself
-            SecurityComponent component = null;
+            SecurityComponent component = null; //component is set from the last iteration (containing component)
+            pathLoop:
             for (int p = 1; p < path.length; p++) {
                 final String currentComponentName = path[p];
                 componentPath.append(currentComponentName);
@@ -69,6 +70,12 @@ public class SecurityMarkingImpl implements SecurityMarking {
                 if (component == null) {
                     //this is the root category, see if we at least have that
                     component = categories.get(currentPath);
+                    //category doesn't exist, inialize one
+                    if (component == null) {
+                        component = policy.getComponentPolicy(currentPath).getComponent();
+                        categories.put(component.getPath(), (SecurityCategory) component);
+                    }
+                    continue pathLoop;
                 } else {
                     //already descended into a category/control, look for sub-
                     //component
@@ -78,15 +85,17 @@ public class SecurityMarkingImpl implements SecurityMarking {
                                 = (CompartmentedSecurityControlImpl) component;
                         for (Compartment cmpt : ctrl.getCompartments()) {
                             if (cmpt.getPath().contentEquals(currentPath)) {
+                                //compartment already exists in this container
                                 component = cmpt;
-                                break;
+                                continue pathLoop;
                             }
                         }
                         //compartment wasn't found, retreive a new one from the policy
+                        //and add it to the container
                         CompartmentControlPolicy cp = (CompartmentControlPolicy) policy.getComponentPolicy(currentPath);
-                        Compartment newCompartment = (Compartment) cp.getComponent();
+                        Compartment compartment = (Compartment) cp.getComponent();
                         
-                        
+                        //TODO add compartment to container
                     } else if (component instanceof Compartment) {
                         Compartment compartment = (Compartment) component;
                         for (SecurityComponent sc : compartment.getSubCompartments()) {
@@ -94,13 +103,13 @@ public class SecurityMarkingImpl implements SecurityMarking {
                                 component = sc;
                                 break;
                             }
-                            //subcompartment wasn't found, retrieve from the policy
-                            SubCompartmentPolicy cp = (SubCompartmentPolicy) policy.getComponentPolicy(currentPath);
-                            component = cp.getComponent();
                         }
-                    } else if (component instanceof SecurityControl) {
+                        //subcompartment wasn't found, retrieve from the policy
+                        SubCompartmentPolicy cp = (SubCompartmentPolicy) policy.getComponentPolicy(currentPath);
+                        component = cp.getComponent();
+                    } else if (component instanceof Control) {
                         //non-compartmented security control   
-                        SecurityControl ctrl = (SecurityControl) component;
+                        Control ctrl = (Control) component;
 
                     } else if (component instanceof SimpleSecurityCategory) {
                         SimpleSecurityCategory cat
@@ -142,9 +151,9 @@ public class SecurityMarkingImpl implements SecurityMarking {
      * @return
      */
     public static SecurityMarking generate(SecurityMarkingImpl marking,
-            SecurityControl... newControls) {
+            Control... newControls) {
         Map<String, SecurityCategory> components = new HashMap<>(marking.controls);
-        for (SecurityControl c : newControls) {
+        for (Control c : newControls) {
             components.put(c.getPath(), c);
         }
     }

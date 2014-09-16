@@ -2,12 +2,12 @@ package org.geoint.lbac.marking.control;
 
 import org.geoint.lbac.marking.SecurityCategory;
 import org.geoint.lbac.marking.SecurityComponent;
-import org.geoint.lbac.policy.control.SecurityControlPolicy;
+import org.geoint.lbac.policy.ControlPolicy;
 
 /**
  * A value within a {@link SecurityCategory}.
  */
-public interface SecurityControl extends SecurityComponent {
+public interface Control extends SecurityComponent {
 
     /**
      * {@inheritDoc}
@@ -15,6 +15,6 @@ public interface SecurityControl extends SecurityComponent {
      * @return 
      */
     @Override
-    SecurityControlPolicy getPolicy();
+    ControlPolicy getPolicy();
     
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lbac>
+    <policy name="SIPRNet">
+        <marking>
+            <container name="classification">
+                <controls>
+                    <control portion="U" banner="UNCLASSIFIED">
+                        <description></description>
+                    </control>
+                    <control portion="C" banner="CONFIDENTIAL">
+                        <description></description>
+                    </control>
+                    <control portion="S" banner="SECRET">
+                        <description></description>
+                    </control>
+                    <restrictions>
+                        <required/>
+                    </restrictions>
+                </controls>
+            </container>
+            <!--
+            <container name="sci">
+                SCI controls are permitted on SECRET information, but is not 
+                permitted on SIPRNet, because it is not an SCI accreditated 
+                system.  Therefore, we'll see the SCI container on the JWICS
+                policy file indicate that SECRET is an accepable classification
+                control, but on the SIPRNet policy, we will not see the same 
+                thing, so that SCI classified data is not brought down to 
+                SIPRNet.
+            </container>
+            -->
+            <container name="dissemination">
+                <controls>
+                    <control portion="FOUO" banner="FOR OFFICIAL USE ONLY">
+                        <description>FOUO is a control marking for unclassified information 
+                            that may be withheld from the public if disclosure would 
+                            reasonably be expected to cause a foreseeable harm to an 
+                            interest protected under the Freedom of Information Act.
+                        </description>
+                        <restrictions>
+                            <with control="classification/U"/>
+                        </restrictions>
+                    </control>
+                </controls>
+            </container>
+        </marking>
+    </policy>
+</lbac>
+      

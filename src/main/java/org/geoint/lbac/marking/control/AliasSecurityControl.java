@@ -1,6 +1,6 @@
 package org.geoint.lbac.marking.control;
 
-import org.geoint.lbac.policy.control.AliasControlPolicy;
+import org.geoint.lbac.policy.AliasControlPolicy;
 
 /**
  * An control which has a potential third token.
@@ -9,7 +9,7 @@ import org.geoint.lbac.policy.control.AliasControlPolicy;
  * the wild. This control is useful for categories such as with the SAP category
  * in the US security marking.
  */
-public interface AliasSecurityControl extends SecurityControl {
+public interface AliasSecurityControl extends Control {
 
     /**
      * {@inheritDoc}

@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import org.geoint.lbac.marking.SecurityComponent;
 import org.geoint.lbac.marking.control.Compartment;
 import org.geoint.lbac.marking.control.CompartmentedSecurityControl;
-import org.geoint.lbac.marking.control.SecurityControl;
+import org.geoint.lbac.marking.control.Control;
 import org.geoint.lbac.policy.control.CompartmentedControlFormat;
 import org.geoint.lbac.policy.control.CompartmentedControlPolicy;
 
@@ -138,9 +138,9 @@ public class CompartmentedSecurityControlImpl
             if (compartment.getSubCompartments().length > 0) {
 
                 //sort and append the subcompartments
-                SortedSet<SecurityControl> sortedSubs = new TreeSet<>(subComparator);
+                SortedSet<Control> sortedSubs = new TreeSet<>(subComparator);
                 sortedSubs.addAll(Arrays.asList(compartment.getSubCompartments()));
-                Iterator<SecurityControl> subIterator = sortedSubs.iterator();
+                Iterator<Control> subIterator = sortedSubs.iterator();
 
                 while (subIterator.hasNext()) {
                     //append the subcompartment separator
@@ -153,7 +153,7 @@ public class CompartmentedSecurityControlImpl
                     }
 
                     //append the subcompartment
-                    SecurityControl sub = subIterator.next();
+                    Control sub = subIterator.next();
                     if (portion) {
                         sb.append(sub.getPortion());
                     } else {

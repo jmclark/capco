@@ -1,4 +1,4 @@
-package org.geoint.lbac.policy;
+package org.geoint.lbac.impl.policy;
 
 import org.geoint.lbac.marking.SecurityLabel;
 

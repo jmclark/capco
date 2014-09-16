@@ -5,28 +5,28 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.geoint.lbac.marking.control.SecurityControl;
+import org.geoint.lbac.marking.control.Control;
 import org.geoint.lbac.policy.SimpleCategoryPolicy;
 
 /**
- * A SecurityCategory which directly contains {@link SecurityControl}s.
+ * A SecurityCategory which directly contains {@link Control}s.
  *
  */
 public class SimpleSecurityCategory extends AbstractSecurityCategory {
 
     private final SimpleCategoryPolicy policy;
-    private final SecurityControl[] controls;
+    private final Control[] controls;
     private String cachedPortion;
     private String cachedBanner;
 
     public SimpleSecurityCategory(String name, SimpleCategoryPolicy policy,
-            SecurityControl... controls) {
+            Control... controls) {
         super(name);
         this.policy = policy;
         this.controls = controls;
     }
 
-    public SecurityControl[] getControls() {
+    public Control[] getControls() {
         return controls;
     }
 
@@ -68,19 +68,19 @@ public class SimpleSecurityCategory extends AbstractSecurityCategory {
         appendLabel(sb, policy);
 
         //sort controls based on defined sort order for the type of marking needed
-        Comparator<SecurityControl> comparator = null;
+        Comparator<Control> comparator = null;
         if (portion) {
             comparator = policy.getFormat().getSortOrder().getPortion();
         } else {
             comparator = policy.getFormat().getSortOrder().getBanner();
         }
-        SortedSet<SecurityControl> sortedControls = new TreeSet<>(comparator);
+        SortedSet<Control> sortedControls = new TreeSet<>(comparator);
         sortedControls.addAll(Arrays.asList(controls));
 
         //append controls
-        Iterator<SecurityControl> iterator = sortedControls.iterator();
+        Iterator<Control> iterator = sortedControls.iterator();
         while (iterator.hasNext()) {
-            SecurityControl c = iterator.next();
+            Control c = iterator.next();
             if (portion) {
                 sb.append(c.getPortion());
             } else {

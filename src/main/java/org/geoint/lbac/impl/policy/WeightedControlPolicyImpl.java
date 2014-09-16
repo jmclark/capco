@@ -3,7 +3,7 @@ package org.geoint.lbac.impl.policy;
 import org.geoint.lbac.impl.ComponentCache;
 import org.geoint.lbac.impl.marking.control.WeightedSecurityControlImpl;
 import org.geoint.lbac.marking.control.WeightedSecurityControl;
-import org.geoint.lbac.policy.control.WeightedControlPolicy;
+import org.geoint.lbac.policy.WeightedControlPolicy;
 
 /**
  *

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lbac>
+    <policy name="JWICS">
+        <marking separator="//">
+            <container name="classification">
+                <components>
+                    <control portion="U" banner="UNCLASSIFIED">
+                        <description></description>
+                    </control>
+                    <control portion="C" banner="CONFIDENTIAL">
+                        <description></description>
+                    </control>
+                    <control portion="S" banner="SECRET">
+                        <description></description>
+                    </control>
+                    <control portion="TS" banner="TOP SECRET">
+                        <description></description>
+                    </control>
+                    <restrictions>
+                        <minControls>1</minControls>
+                        <maxControls>1</maxControls>
+                        <overflowAction>RESTRICT</overflowAction>
+                    </restrictions>
+                </components>
+            </container>
+            <container name="sci" separator="-">
+                <components>
+                    <container name="hcs" portionPrefix="HCS" bannerPrefix="HCS" separator=" ">
+                        <restrictions>
+                            <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
+                        </restrictions>
+                    </container>
+                    <container name="si" portionPrefix="SI" bannerPrefix="SI" separator=" ">
+                        <restrictions>
+                            <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
+                        </restrictions>
+                    </container>
+                    <container name="gamma" portionPrefix="G" bannerPrefix="GAMMA" separator=" ">
+                        <restrictions>
+                            <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
+                        </restrictions>
+                    </container>
+                    <container name="tk" portionPrefix="TK" bannerPrefix="TK" separator=" ">
+                        <restrictions>
+                            <minControls>0</minControls> <!-- we want the container to be selectable even without categories or sub-categories -->
+                        </restrictions>
+                    </container>
+                </components>
+                <restrictions>
+                    <with component="classification/C"/>
+                    <with component="classification/S"/>
+                    <with component="classification/TS"/>
+                </restrictions>
+            </container>
+            <container name="sap">
+                <!-- SAP components are controlled and must be added on the 
+                appropriate network -->
+            </container>
+            <container name="fgi" portionPrefix="FGI " separator=" ">
+                <components>
+                    <control portion="GBR" banner="GBR"/>
+                    <control portion="CAN" banner="CAN"/>
+                    <control portion="AUS" banner="AUS"/>
+                    <control portion="NZL" banner="NZL"/>
+                    <control portion="NATO" banner="NATO"/>
+                </components>
+                <restrictions>
+                    <with component="classification/C"/>
+                    <with component="classification/S"/>
+                    <with component="classification/TS"/>
+                </restrictions>
+            </container>
+            <container name="dissemination" separator="/">
+                <components>
+                    <control portion="FOUO" banner="FOR OFFICIAL USE ONLY">
+                        <description>FOUO is a control marking for unclassified information 
+                            that may be withheld from the public if disclosure would 
+                            reasonably be expected to cause a foreseeable harm to an 
+                            interest protected under the Freedom of Information Act.
+                        </description>
+                        <restrictions>
+                            <with component="classification/U"/>
+                        </restrictions>
+                    </control>
+                    <control portion="ORCON" banner="ORCON">
+                        <description>The ORIGINATOR CONTROLLED or ORCON marking
+                            is used when dissemination and extraction of 
+                            information must be controlled by the originator.
+                        </description>
+                        <restrictions>
+                            <with component="classification/C"/>
+                            <with component="classification/S"/>
+                            <with component="classification/TS"/>
+                        </restrictions>
+                    </control>
+                    <container name="rel to" separator=" " sort="org.geoint.lbac.sort.USFirstAlphabetical">
+                        <control portion="GBR" banner="GBR"/>
+                        <control portion="CAN" banner="CAN"/>
+                        <control portion="AUS" banner="AUS"/>
+                        <control portion="NZL" banner="NZL"/>
+                        <control portion="NATO" banner="NATO"/>
+                        <control portion="FVEY" banner="FVEY">
+                            <restrictions>
+                                <notWith component="dissemination/rel to/GBR"/>
+                            </restrictions>
+                        </control>
+                        
+                    </container>
+                </components>
+            </container>
+        </marking>
+    </policy>
+</lbac>
+      
