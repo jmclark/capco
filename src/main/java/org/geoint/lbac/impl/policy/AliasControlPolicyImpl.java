@@ -1,7 +1,7 @@
 package org.geoint.lbac.impl.policy;
 
 import org.geoint.lbac.impl.LabelCache;
-import org.geoint.lbac.impl.marking.control.AliasSecurityControlImpl;
+import org.geoint.lbac.impl.marking.AliasSecurityControlImpl;
 import org.geoint.lbac.marking.AliasSecurityControl;
 import org.geoint.lbac.policy.AliasControlPolicy;
 

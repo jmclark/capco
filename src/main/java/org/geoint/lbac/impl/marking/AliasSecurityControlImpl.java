@@ -1,4 +1,4 @@
-package org.geoint.lbac.impl.marking.control;
+package org.geoint.lbac.impl.marking;
 
 import org.geoint.lbac.marking.AliasSecurityControl;
 import org.geoint.lbac.policy.AliasControlPolicy;

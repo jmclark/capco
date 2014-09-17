@@ -1,7 +1,7 @@
 package org.geoint.lbac.impl.policy;
 
 import org.geoint.lbac.impl.LabelCache;
-import org.geoint.lbac.impl.marking.control.WeightedSecurityControlImpl;
+import org.geoint.lbac.impl.marking.WeightedSecurityControlImpl;
 import org.geoint.lbac.marking.WeightedSecurityControl;
 import org.geoint.lbac.policy.WeightedControlPolicy;
 

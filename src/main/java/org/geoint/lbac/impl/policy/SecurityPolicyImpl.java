@@ -8,11 +8,8 @@ import org.geoint.lbac.marking.InvalidSecurityMarkingException;
 import org.geoint.lbac.marking.SecurityMarking;
 import org.geoint.lbac.marking.SecurityMarkingBuilder;
 import org.geoint.lbac.marking.UnknownSecurityComponentException;
-import org.geoint.lbac.policy.CategoryPolicy;
-import org.geoint.lbac.policy.NestedCategoryPolicy;
 import org.geoint.lbac.policy.ComponentPolicy;
 import org.geoint.lbac.policy.SecurityPolicy;
-import org.geoint.lbac.policy.SimpleCategoryPolicy;
 
 /**
  *

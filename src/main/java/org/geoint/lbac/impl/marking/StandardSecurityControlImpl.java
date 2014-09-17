@@ -1,4 +1,4 @@
-package org.geoint.lbac.impl.marking.control;
+package org.geoint.lbac.impl.marking;
 
 import java.util.Objects;
 import org.geoint.lbac.marking.Control;

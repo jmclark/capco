@@ -107,19 +107,19 @@ public interface SecurityPolicy {
     SecurityMarking merge(String... markings) throws LbacException;
 
     /**
-     * Returns the category names for this policy.
+     * Returns the root category paths for this policy.
      *
      * @return
      */
     String[] getCategoryNames();
 
     /**
-     * Returns the category policy for the specified category.
+     * Returns the component policy for the specified path.
      *
-     * @param categoryName
+     * @param path
      * @return
      */
-    CategoryPolicy getCategory(String categoryName);
+    ComponentPolicy getComponent(String path);
 
     /**
      * Returns a marking builder for this policy.
