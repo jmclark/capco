@@ -14,22 +14,22 @@ import org.geoint.lbac.sort.AlphabeticalPortionComparator;
 
 /**
  *
- * @param <P>
+ *
+ * @param <P> the policy type of the container security components
+ * @param <C> the type of the contained security components
  */
-public class ContainerPolicyImpl<P extends ComponentPolicy> implements ContainerPolicy<P> {
+public class ContainerPolicyImpl<P extends ComponentPolicy, C extends SecurityComponent>
+        implements ContainerPolicy<P, C> {
 
     private final String path;
     private final String containerName;
     private final String portionPrefix;
     private final String bannerPrefix;
     private final String componentSeparator;
-    private final Comparator<P> portionComparator;
-    private final Comparator<P> bannerComparator;
+    private final Comparator<C> portionComparator;
+    private final Comparator<C> bannerComparator;
     private final ComponentPolicy[] componentPolicies;
 
-    public static final String DEFAULT_PORTION_PREFIX = "";
-    public static final String DEFAULT_BANNER_PREFIX = "";
-    public static final String DEFAULT_SEPARATOR = "/";
     public static final Comparator<? extends SecurityComponent> DEFAULT_PORTION_COMPARATOR
             = new AlphabeticalPortionComparator();
     public static final Comparator<? extends SecurityComponent> DEFAULT_BANNER_COMPARATOR
@@ -37,7 +37,7 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
 
     private ContainerPolicyImpl(String path, String containerName,
             String portionPrefix, String bannerPrefix, String componentSeparator,
-            Comparator<P> portionComparator, Comparator<P> bannerComparator,
+            Comparator<C> portionComparator, Comparator<C> bannerComparator,
             ComponentPolicy... componentPolicies) {
         this.path = path;
         this.containerName = containerName;
@@ -49,7 +49,7 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
         this.componentPolicies = componentPolicies;
     }
 
-    public static ContainerPolicyBuilder create(String path, String name) {
+    public static ContainerPolicyBuilder<?, ?> create(String path, String name) {
         return new ContainerPolicyBuilder(path, name);
     }
 
@@ -79,17 +79,17 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
     }
 
     @Override
-    public Comparator<P> getPortionComparator() {
+    public Comparator<C> getPortionComparator() {
         return portionComparator;
     }
 
     @Override
-    public Comparator<P> getBannerComparator() {
+    public Comparator<C> getBannerComparator() {
         return bannerComparator;
     }
 
     @Override
-    public ContainerImpl getComponent() {
+    public ContainerImpl<P, C> getComponent() {
         return ContainerImpl.instance(this);
     }
 
@@ -114,7 +114,7 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ContainerPolicyImpl<?> other = (ContainerPolicyImpl<?>) obj;
+        final ContainerPolicyImpl<?, ?> other = (ContainerPolicyImpl<?, ?>) obj;
         if (!Objects.equals(this.path, other.path)) {
             return false;
         }
@@ -126,18 +126,18 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
 
     @Override
     public String toString() {
-        return "container: "+containerName;
+        return "container: " + containerName;
     }
-    
-    public static class ContainerPolicyBuilder<P extends ComponentPolicy> {
+
+    public static class ContainerPolicyBuilder<P extends ComponentPolicy, C extends SecurityComponent> {
 
         private final String path;
         private final String name;
         private String portionPrefix;
         private String bannerPrefix;
         private String componentSeparator;
-        private Comparator<P> portionComparator;
-        private Comparator<P> bannerComparator;
+        private Comparator<C> portionComparator;
+        private Comparator<C> bannerComparator;
         private final Set<P> componentPolicies = new HashSet<>();
 
         public ContainerPolicyBuilder(String path, String name) {
@@ -160,7 +160,8 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
             return this;
         }
 
-        public ContainerPolicyBuilder withComparators(Comparator<P> portion, Comparator<P> banner) {
+        public ContainerPolicyBuilder withComparators(Comparator<C> portion, 
+                Comparator<C> banner) {
             this.portionComparator = portion;
             this.bannerComparator = banner;
             return this;
@@ -171,7 +172,7 @@ public class ContainerPolicyImpl<P extends ComponentPolicy> implements Container
             return this;
         }
 
-        public ContainerPolicyImpl build() {
+        public ContainerPolicyImpl<P, C> build() {
             return new ContainerPolicyImpl(
                     this.path,
                     this.name,

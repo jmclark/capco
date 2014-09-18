@@ -1,13 +1,15 @@
 package org.geoint.lbac.marking;
 
+import org.geoint.lbac.policy.ComponentPolicy;
 import org.geoint.lbac.policy.ContainerPolicy;
 
 /**
  * Contains one or more {@link SecurityComponent}.
  *
- * @param <C>
+ * @param <P> the policy type of the components contained within this container
+ * @param <C> the type of component contained within the container
  */
-public interface ComponentContainer<C extends SecurityComponent>
+public interface ComponentContainer<P extends ComponentPolicy, C extends SecurityComponent>
         extends SecurityComponent {
 
     /**

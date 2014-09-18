@@ -2,13 +2,19 @@ package org.geoint.lbac.policy;
 
 import java.util.Comparator;
 import org.geoint.lbac.marking.ComponentContainer;
+import org.geoint.lbac.marking.SecurityComponent;
 
 /**
  *
- * @param <P>
+ * @param <P> the policy type of the container security components
+ * @param <C> the type of the contained security components
  */
-public interface ContainerPolicy<P extends ComponentPolicy>
-        extends ComponentPolicy, Iterable<P> {
+public interface ContainerPolicy<P extends ComponentPolicy, C extends SecurityComponent>
+        extends ComponentPolicy<ComponentContainer>, Iterable<P> {
+
+    String DEFAULT_PORTION_PREFIX = "";
+    String DEFAULT_BANNER_PREFIX = "";
+    String DEFAULT_SEPARATOR = "/";
 
     /**
      * Returns the name of the container.
@@ -54,14 +60,14 @@ public interface ContainerPolicy<P extends ComponentPolicy>
      *
      * @return
      */
-    Comparator<P> getPortionComparator();
+    Comparator<C> getPortionComparator();
 
     /**
      * Return the comparator to use to sort the components by banner marking.
      *
      * @return
      */
-    Comparator<P> getBannerComparator();
+    Comparator<C> getBannerComparator();
 
     /**
      * Returns an instance of the component container.
@@ -74,5 +80,5 @@ public interface ContainerPolicy<P extends ComponentPolicy>
      * @return
      */
     @Override
-    ComponentContainer getComponent();
+    ComponentContainer<P, C> getComponent();
 }

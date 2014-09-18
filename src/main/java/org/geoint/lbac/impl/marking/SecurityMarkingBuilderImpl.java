@@ -149,7 +149,7 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
             //attempt to see if there is such a control in this policy
             String[] oldPath = componentPath.split(SecurityComponent.PATH_SEPARATOR);
             oldPath[0] = policy.getName();
-            componentPath = join(oldPath, SecurityComponent.PATH_SEPARATOR);
+            componentPath = StringUtils.join(oldPath, SecurityComponent.PATH_SEPARATOR);
         }
 
         ComponentPolicy componentPolicy
@@ -202,14 +202,5 @@ public class SecurityMarkingBuilderImpl implements SecurityMarkingBuilder {
         return this;
     }
 
-    private String join(String[] s, String glue) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < s.length; i++) {
-            sb.append(s);
-            if (i < s.length) {
-                sb.append(glue);
-            }
-        }
-        return sb.toString();
-    }
+   
 }

@@ -1,7 +1,7 @@
 package org.geoint.lbac.impl.policy;
 
 import java.util.Objects;
-import org.geoint.lbac.impl.LabelCache;
+import org.geoint.lbac.cache.LabelCache;
 import org.geoint.lbac.impl.marking.StandardSecurityControlImpl;
 import org.geoint.lbac.marking.Control;
 import org.geoint.lbac.policy.ControlPolicy;
